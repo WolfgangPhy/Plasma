@@ -1,9 +1,0 @@
-{
-    "particle_number": 1000,
-    "particle_charge": 1.0,
-    "particle_mass": 1.0,
-    "domain_size": 1.0,
-    "cells_number": 100,
-    "max_initial_velocity": 0.1,
-    "min_initial_velocity": 0.0
-}
