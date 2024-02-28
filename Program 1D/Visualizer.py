@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 from matplotlib.animation import FuncAnimation
 class Visualizer:
     
@@ -11,13 +12,13 @@ class Visualizer:
         velocities_array = data['velocities']
         positions = positions_array[-1, :]
         velocities = velocities_array[-1, :]
-        plt.figure()
-        plt.scatter(positions, velocities, s=1)
-        plt.xlabel('Position')
-        plt.ylabel('Velocity')
-        #plt.xlim(0., 1.)
-        #plt.ylim(-1., 1.)
-        plt.title('Phase space')
+        _, ax = plt.subplots()
+        sns.scatterplot(positions, velocities, ax=ax)
+        ax.set_xlabel('Position')
+        ax.set_ylabel('Velocity')
+        ax.set_title('Phase space')
+        ax.set_xlim(0, 1)
+        ax.set_ylim(-1, 1)
         plt.show()
         
     @staticmethod
@@ -29,7 +30,7 @@ class Visualizer:
 
         # Initialiser la figure
         fig, ax = plt.subplots()
-        scatter, = ax.plot([], [], 'ro')
+        scatter, = ax.plot([], [], 'ro', markersize=1)
 
         # Définir les limites des axes
         
