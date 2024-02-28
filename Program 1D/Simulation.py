@@ -24,6 +24,8 @@ class Simulation:
     def init_arrays(self):
         self.potential_matrix = -2 * np.eye(self.cells_number) + np.eye(self.cells_number, k=1) +\
                                 np.eye(self.cells_number, k=-1)
+        self.potential_matrix[0, -1] = self.potential_matrix[-1, 0] = 1
+        
         self.positions = np.random.uniform(0, self.domain_size, size=(1, self.particles_number))
         self.velocities = np.random.choice([-1, 1], size=(1, self.particles_number)) +\
             np.random.uniform(-self.max_initial_velocity_deviation, self.max_initial_velocity_deviation,
@@ -31,7 +33,6 @@ class Simulation:
         self.dt = np.zeros(self.iterations_number)
 
     def compute_charge_density(self, iteration):
-        self.density = np.zeros(self.cells_number)
         histograms, _ = np.histogram(self.positions[iteration, :], bins=self.cells_number, range=(0, self.domain_size))
         return self.particles_number / self.cells_number - histograms
 
@@ -50,14 +51,9 @@ class Simulation:
     def compute_time_step(self, iteration):
         self.dt[iteration] = np.min(self.dx / np.abs(self.velocities[iteration, :]))
 
+    #update_positions_velocities using a Euler method
     def update_positions_velocities(self, force, iteration):
-
-        temp_velocities = self.velocities[iteration, :] + 0.5 * force * self.dt[iteration] / self.particle_mass
-        new_positions = self.positions[-1, :] + temp_velocities * self.dt[iteration]
-        new_positions = np.mod(new_positions, self.domain_size)
-        self.positions = np.vstack([self.positions, new_positions])
-        temp_velocities += 0.5 * force * self.dt[iteration] / self.particle_mass
-        self.velocities = np.vstack([self.velocities, temp_velocities])
+        #TODO: update positions and velocities using a Euler method
 
     def save_results(self):
         np.savez('results.npz', positions=self.positions, velocities=self.velocities, dt=self.dt)

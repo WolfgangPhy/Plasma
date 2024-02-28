@@ -12,7 +12,7 @@ class Visualizer:
         positions = positions_array[-1, :]
         velocities = velocities_array[-1, :]
         plt.figure()
-        plt.scatter(positions, velocities)
+        plt.scatter(positions, velocities, s=1)
         plt.xlabel('Position')
         plt.ylabel('Velocity')
         #plt.xlim(0., 1.)
@@ -37,7 +37,7 @@ class Visualizer:
         # Initialisation de l'animation
         def init():
             ax.set_xlim(0., 1.)
-            ax.set_ylim(1., 1)
+            ax.set_ylim(-1, 1)
             return scatter,
 
         # Fonction d'animation

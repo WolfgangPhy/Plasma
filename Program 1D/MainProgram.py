@@ -14,7 +14,6 @@ class MainProgram:
             self.parameters = json.load(file)
             
     def run(self):
-        self.set_parameters()
         sim = Simulation(self.parameters)
         sim.run()
         Visualizer.plot_phase_space()
