@@ -53,7 +53,9 @@ class Simulation:
 
     #update_positions_velocities using a Euler method
     def update_positions_velocities(self, force, iteration):
-        #TODO: update positions and velocities using a Euler method
+        new_positions = self.positions[-1, :] + self.dt[iteration]*self.velocities[-1,:]
+        new_velocities = self.velocities[-1,:] + self.dt[iteration]*(1/self.particle_mass)*force
+        
 
     def save_results(self):
         np.savez('results.npz', positions=self.positions, velocities=self.velocities, dt=self.dt)
