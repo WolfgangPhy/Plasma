@@ -166,6 +166,8 @@ class Simulation:
         """
         new_positions = self.positions[-1, :] + self.dt[iteration]*self.velocities[-1,:]
         new_velocities = self.velocities[-1,:] + self.dt[iteration]*(1/self.particle_mass)*force
+        self.positions = np.vstack((self.positions, new_positions))
+        self.velocities = np.vstack((self.velocities, new_velocities))
         
     def save_results(self):
         """
