@@ -194,7 +194,8 @@ class Simulation:
         """
         for iteration in tqdm(range(self.iterations_number)):
             charge_density = self.compute_charge_density(iteration)
-            potential = self.compute_potential(charge_density)
+            #potential = self.compute_potential(charge_density)
+            potential = self.update_potential(charge_density)
             electric_field = self.compute_electric_field(potential)
             particle_electric_field = self.compute_particle_electric_field(electric_field, iteration)
             force = self.compute_force(particle_electric_field)
