@@ -74,6 +74,7 @@ class Simulation:
         self.potential_matrix[0, -1] = self.potential_matrix[-1, 0] = 1
         
         self.positions = np.random.uniform(0, self.domain_size, size=(1, self.particles_number))
+        self.potential_array = np.zeros((1, self.particles_number))
         self.velocities = np.random.choice([-1, 1], size=(1, self.particles_number)) +\
             np.random.uniform(-self.max_initial_velocity_deviation, self.max_initial_velocity_deviation,
                               size=(1, self.particles_number))
@@ -91,7 +92,13 @@ class Simulation:
         """
         histograms, _ = np.histogram(self.positions[iteration, :], bins=self.cells_number, range=(0, self.domain_size))
         return (self.particles_number/2) / self.cells_number - histograms
-
+    
+    def update_potential(self, density):
+        
+        new_potential = (np.roll(self.potential_array[-1,:], 1) + np.roll(self.potential_array[-1,:], -1))/2 + density * self.FACTOR * (1/2)
+        self.potential_array = np.vstack((self.potential_array, new_potential))
+        
+        
     def compute_potential(self, density):
         """
         Compute potential based on charge density.
