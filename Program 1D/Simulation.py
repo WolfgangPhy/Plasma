@@ -90,7 +90,7 @@ class Simulation:
             `numpy.ndarray`: Charge density array.
         """
         histograms, _ = np.histogram(self.positions[iteration, :], bins=self.cells_number, range=(0, self.domain_size))
-        return self.particles_number / self.cells_number - histograms
+        return (self.particles_number/2) / self.cells_number - histograms
 
     def compute_potential(self, density):
         """
