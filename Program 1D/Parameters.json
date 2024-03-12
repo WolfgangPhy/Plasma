@@ -1,5 +1,5 @@
 {
-    "particles_number": 1000,
+    "particles_number": 10000,
     "particle_charge": 0,
     "particle_mass": 1.0,
     "domain_size": 1.0,
