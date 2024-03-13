@@ -91,14 +91,14 @@ class Simulation:
             `numpy.ndarray`: Charge density array.
         """
         histograms, _ = np.histogram(self.positions[iteration, :], bins=self.cells_number, range=(0, self.domain_size))
-        return (self.particles_number/2) / self.cells_number - histograms
+        return (self.particles_number) / self.cells_number - histograms
     
     def update_potential(self, density):
         
-        new_potential = (np.roll(self.potential_array[-1,:], 1) + np.roll(self.potential_array[-1,:], -1))/2 + density * self.FACTOR * (1/2)
+        new_potential = ((np.roll(self.potential_array[-1, :], 1) + np.roll(self.potential_array[-1, :], -1))/2 +
+                         density * self.FACTOR * (1/2))
         self.potential_array = np.vstack((self.potential_array, new_potential))
-        
-        
+
     def compute_potential(self, density):
         """
         Compute potential based on charge density.
@@ -109,9 +109,9 @@ class Simulation:
         # Returns:
             `numpy.ndarray`: Potential array.
         """
-        return np.linalg.solve(self.potential_matrix, - density * self.FACTOR)
+        return np.linalg.solve(self.potential_matrix, - density * self.FACTOR) #TODO : corriger
 
-    def compute_electric_field(self, potential):
+    def compute_electric_field(self):
         """
         Compute electric field based on potential.
 
@@ -121,7 +121,7 @@ class Simulation:
         # Returns:
             `numpy.ndarray`: Electric field array.
         """
-        return  np.gradient(potential, self.dx)*-1.0
+        return - np.gradient(self.potential_array[-1, :], self.dx)
 
     def compute_particle_electric_field(self, electric_field, iteration):
         """
@@ -172,6 +172,7 @@ class Simulation:
             None
         """
         new_positions = self.positions[-1, :] + self.dt[iteration]*self.velocities[-1,:]
+        new_positions = np.mod(new_positions, self.domain_size)
         new_velocities = self.velocities[-1,:] + self.dt[iteration]*(1/self.particle_mass)*force
         self.positions = np.vstack((self.positions, new_positions))
         self.velocities = np.vstack((self.velocities, new_velocities))
@@ -194,9 +195,9 @@ class Simulation:
         """
         for iteration in tqdm(range(self.iterations_number)):
             charge_density = self.compute_charge_density(iteration)
-            #potential = self.compute_potential(charge_density)
-            potential = self.update_potential(charge_density)
-            electric_field = self.compute_electric_field(potential)
+            # potential = self.compute_potential(charge_density)
+            self.update_potential(charge_density)
+            electric_field = self.compute_electric_field()
             particle_electric_field = self.compute_particle_electric_field(electric_field, iteration)
             force = self.compute_force(particle_electric_field)
             self.compute_time_step(iteration)

@@ -26,18 +26,13 @@ class Visualizer:
         positions = positions_array[-1, :]
         velocities = velocities_array[-1, :]
 
-        # Create a scatter plot
-        _, ax = plt.subplots()
-        sns.scatterplot(positions, velocities, ax=ax)
-
-        # Set plot labels and title
-        ax.set_xlabel('Position')
-        ax.set_ylabel('Velocity')
-        ax.set_title('Phase Space')
-
-        # Set axis limits
-        ax.set_xlim(0, 1)
-        ax.set_ylim(-1, 1)
+        plt.figure()
+        plt.scatter(positions, velocities, s=1)
+        plt.xlabel('Position')
+        plt.ylabel('Velocity')
+        #plt.xlim(0., 1.)
+        #plt.ylim(-1., 1.)
+        plt.title('Phase space')
 
         # Show the plot
         plt.show()
@@ -65,7 +60,7 @@ class Visualizer:
         # Initialization function for the animation
         def init():
             ax.set_xlim(0., 1.)
-            ax.set_ylim(-1, 1)
+            ax.set_ylim(-100, 100)
             return scatter,
 
         # Animation function
