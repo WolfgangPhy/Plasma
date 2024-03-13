@@ -94,7 +94,12 @@ class Simulation:
         return (self.particles_number) / self.cells_number - histograms
     
     def update_potential(self, density):
-        
+        """
+        Update potential based on charge density using relaxation method.
+
+        Args:
+            density (numpy.ndarray): Charge density array.
+        """
         new_potential = ((np.roll(self.potential_array[-1, :], 1) + np.roll(self.potential_array[-1, :], -1))/2 +
                          density * self.FACTOR * (1/2))
         self.potential_array = np.vstack((self.potential_array, new_potential))
@@ -110,6 +115,20 @@ class Simulation:
             `numpy.ndarray`: Potential array.
         """
         return np.linalg.solve(self.potential_matrix, - density * self.FACTOR) #TODO : corriger
+    
+    def compute_potential_Fourier(self, density):
+        """
+        Compute potential based on charge density using Fourier method.
+
+        # Args:
+            - `density (numpy.ndarray)`: Charge density array.
+
+        # Returns:
+            `numpy.ndarray`: Potential array.
+        """
+        density_fourier = np.fft.fft(density)
+        potential_fourier = density_fourier / (1j * np.fft.fftfreq(self.cells_number) * self.FACTOR)
+        return np.real(np.fft.ifft(potential_fourier))
 
     def compute_electric_field(self):
         """
@@ -195,8 +214,10 @@ class Simulation:
         """
         for iteration in tqdm(range(self.iterations_number)):
             charge_density = self.compute_charge_density(iteration)
-            # potential = self.compute_potential(charge_density)
-            self.update_potential(charge_density)
+            #self.potential_array = self.compute_potential(charge_density)
+            #self.update_potential(charge_density)
+            potential = self.compute_potential_Fourier(charge_density)
+            self.potential_array = np.vstack((self.potential_array, potential))
             electric_field = self.compute_electric_field()
             particle_electric_field = self.compute_particle_electric_field(electric_field, iteration)
             force = self.compute_force(particle_electric_field)
