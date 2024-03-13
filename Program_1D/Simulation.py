@@ -74,7 +74,7 @@ class Simulation:
         self.potential_matrix[0, -1] = self.potential_matrix[-1, 0] = 1
         
         self.positions = np.random.uniform(0, self.domain_size, size=(1, self.particles_number))
-        self.potential_array = np.zeros((1, self.particles_number))
+        self.potential_array = np.zeros((1, self.cells_number))
         self.velocities = np.random.choice([-1, 1], size=(1, self.particles_number)) +\
             np.random.uniform(-self.max_initial_velocity_deviation, self.max_initial_velocity_deviation,
                               size=(1, self.particles_number))
@@ -121,7 +121,7 @@ class Simulation:
         # Returns:
             `numpy.ndarray`: Electric field array.
         """
-        return - np.gradient(potential, self.dx)
+        return  np.gradient(potential, self.dx)*-1.0
 
     def compute_particle_electric_field(self, electric_field, iteration):
         """
