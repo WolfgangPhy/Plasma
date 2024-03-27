@@ -61,6 +61,8 @@ class Simulation:
         self.cells_number = self.parameters['cells_number']
         self.max_initial_velocity_deviation = self.parameters['max_initial_velocity_deviation']
         self.iterations_number = self.parameters['iterations_number']
+        self.tolerance = self.parameters['tolerance']
+        self.max_iteration_number_potential = self.parameters['max_iteration_number_potential']
 
     def init_arrays(self):
         """
@@ -103,6 +105,25 @@ class Simulation:
         new_potential = ((np.roll(self.potential_array[-1, :], 1) + np.roll(self.potential_array[-1, :], -1))/2 +
                          density * self.FACTOR * (1/2))
         self.potential_array = np.vstack((self.potential_array, new_potential))
+        
+        
+        
+    def compute_potential_jacobi(self, density):
+        
+        for p in range(self.max_iteration_number_potential):
+            
+             new_potential = ((np.roll(self.potential_array[-1, :], 1) + np.roll(self.potential_array[-1, :], -1))/2 +
+                         density * self.FACTOR * (1/2))
+             new_potential = np.mod(new_potential, self.domain_size)
+             
+             delta = np.max(np.abs(new_potential-self.potential_array[-1,:]))
+ 
+             if(delta < self.tolerance):
+                 
+                 break
+             return new_potential
+             
+ 
 
     def compute_potential(self, density):
         """
@@ -127,8 +148,8 @@ class Simulation:
             `numpy.ndarray`: Potential array.
         """
         density_fourier = np.fft.fft(density)
-        potential_fourier = density_fourier / (1j * np.fft.fftfreq(self.cells_number) * self.FACTOR)
-        return np.real(np.fft.ifft(potential_fourier))
+        potential_fourier = density_fourier / (-np.fft.fftfreq(self.cells_number)*np.fft.fftfreq(self.cells_number)) * self.FACTOR
+        return np.fft.ifft(potential_fourier)
 
     def compute_electric_field(self):
         """
@@ -216,7 +237,8 @@ class Simulation:
             charge_density = self.compute_charge_density(iteration)
             #self.potential_array = self.compute_potential(charge_density)
             #self.update_potential(charge_density)
-            potential = self.compute_potential_Fourier(charge_density)
+            #potential = self.compute_potential_Fourier(charge_density)
+            potential = self.compute_potential_jacobi(charge_density)
             self.potential_array = np.vstack((self.potential_array, potential))
             electric_field = self.compute_electric_field()
             particle_electric_field = self.compute_particle_electric_field(electric_field, iteration)
