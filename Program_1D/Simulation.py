@@ -1,6 +1,7 @@
 import numpy as np
 from tqdm import tqdm
 
+
 class Simulation:
     """
     Class for simulating a 1D plasma using the Particle-in-Cell method.
@@ -38,8 +39,9 @@ class Simulation:
         - `run()`: Run the simulation.
 
     """
-    
+
     def __init__(self, parameters):
+        self.potential_array = None
         self.parameters = parameters
         self.dx = self.parameters['domain_size'] / self.parameters['cells_number']
         self.EPSILON_0 = 8.854187817e-12
@@ -71,15 +73,15 @@ class Simulation:
         # Returns:
             None
         """
-        self.potential_matrix = -2 * np.eye(self.cells_number) + np.eye(self.cells_number, k=1) +\
+        self.potential_matrix = -2 * np.eye(self.cells_number) + np.eye(self.cells_number, k=1) + \
                                 np.eye(self.cells_number, k=-1)
         self.potential_matrix[0, -1] = self.potential_matrix[-1, 0] = 1
-        
+
         self.positions = np.random.uniform(0, self.domain_size, size=(1, self.particles_number))
         self.potential_array = np.zeros((1, self.cells_number))
-        self.velocities = np.random.choice([-1, 1], size=(1, self.particles_number)) +\
-            np.random.uniform(-self.max_initial_velocity_deviation, self.max_initial_velocity_deviation,
-                              size=(1, self.particles_number))
+        self.velocities = np.random.choice([-1, 1], size=(1, self.particles_number)) + \
+                          np.random.uniform(-self.max_initial_velocity_deviation, self.max_initial_velocity_deviation,
+                                            size=(1, self.particles_number))
         self.dt = np.zeros(self.iterations_number)
 
     def compute_charge_density(self, iteration):
@@ -94,7 +96,7 @@ class Simulation:
         """
         histograms, _ = np.histogram(self.positions[iteration, :], bins=self.cells_number, range=(0, self.domain_size))
         return (self.particles_number) / self.cells_number - histograms
-    
+
     def update_potential(self, density):
         """
         Update potential based on charge density using relaxation method.
@@ -102,28 +104,23 @@ class Simulation:
         Args:
             density (numpy.ndarray): Charge density array.
         """
-        new_potential = ((np.roll(self.potential_array[-1, :], 1) + np.roll(self.potential_array[-1, :], -1))/2 +
-                         density * self.FACTOR * (1/2))
+        new_potential = ((np.roll(self.potential_array[-1, :], 1) + np.roll(self.potential_array[-1, :], -1)) / 2 +
+                         density * self.FACTOR * (1 / 2))
         self.potential_array = np.vstack((self.potential_array, new_potential))
-        
-        
-        
+
     def compute_potential_jacobi(self, density):
-        
+
         for p in range(self.max_iteration_number_potential):
-            
-             new_potential = ((np.roll(self.potential_array[-1, :], 1) + np.roll(self.potential_array[-1, :], -1))/2 +
-                         density * self.FACTOR * (1/2))
-             new_potential = np.mod(new_potential, self.domain_size)
-             
-             delta = np.max(np.abs(new_potential-self.potential_array[-1,:]))
- 
-             if(delta < self.tolerance):
-                 
-                 break
-             return new_potential
-             
- 
+
+            new_potential = ((np.roll(self.potential_array[-1, :], 1) + np.roll(self.potential_array[-1, :], -1)) / 2 +
+                             density * self.FACTOR * (1 / 2))
+            new_potential = np.mod(new_potential, self.domain_size)
+
+            delta = np.max(np.abs(new_potential - self.potential_array[-1, :]))
+
+            if delta < self.tolerance:
+                break
+            return new_potential
 
     def compute_potential(self, density):
         """
@@ -135,8 +132,8 @@ class Simulation:
         # Returns:
             `numpy.ndarray`: Potential array.
         """
-        return np.linalg.solve(self.potential_matrix, - density * self.FACTOR) #TODO : corriger
-    
+        return np.linalg.solve(self.potential_matrix, - density * self.FACTOR)  # TODO : corriger
+
     def compute_potential_Fourier(self, density):
         """
         Compute potential based on charge density using Fourier method.
@@ -148,7 +145,8 @@ class Simulation:
             `numpy.ndarray`: Potential array.
         """
         density_fourier = np.fft.fft(density)
-        potential_fourier = density_fourier / (-np.fft.fftfreq(self.cells_number)*np.fft.fftfreq(self.cells_number)) * self.FACTOR
+        potential_fourier = density_fourier / (
+                    -np.fft.fftfreq(self.cells_number) * np.fft.fftfreq(self.cells_number)) * self.FACTOR
         return np.fft.ifft(potential_fourier)
 
     def compute_electric_field(self):
@@ -211,12 +209,12 @@ class Simulation:
         # Returns:
             None
         """
-        new_positions = self.positions[-1, :] + self.dt[iteration]*self.velocities[-1,:]
+        new_positions = self.positions[-1, :] + self.dt[iteration] * self.velocities[-1, :]
         new_positions = np.mod(new_positions, self.domain_size)
-        new_velocities = self.velocities[-1,:] + self.dt[iteration]*(1/self.particle_mass)*force
+        new_velocities = self.velocities[-1, :] + self.dt[iteration] * (1 / self.particle_mass) * force
         self.positions = np.vstack((self.positions, new_positions))
         self.velocities = np.vstack((self.velocities, new_velocities))
-        
+
     def save_results(self):
         """
         Save simulation results to 'results.npz'.
@@ -235,9 +233,9 @@ class Simulation:
         """
         for iteration in tqdm(range(self.iterations_number)):
             charge_density = self.compute_charge_density(iteration)
-            #self.potential_array = self.compute_potential(charge_density)
-            #self.update_potential(charge_density)
-            #potential = self.compute_potential_Fourier(charge_density)
+            # self.potential_array = self.compute_potential(charge_density)
+            # self.update_potential(charge_density)
+            # potential = self.compute_potential_Fourier(charge_density)
             potential = self.compute_potential_jacobi(charge_density)
             self.potential_array = np.vstack((self.potential_array, potential))
             electric_field = self.compute_electric_field()
