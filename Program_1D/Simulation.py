@@ -44,7 +44,7 @@ class Simulation:
         self.potential_array = None
         self.parameters = parameters
         self.dx = self.parameters['domain_size'] / self.parameters['cells_number']
-        self.EPSILON_0 = 8.854187817e-12
+        self.EPSILON_0 = 0.55
         self.FACTOR = self.dx * self.dx / self.EPSILON_0
         self.set_initial_conditions()
         self.init_arrays()
@@ -97,7 +97,7 @@ class Simulation:
         histograms, _ = np.histogram(self.positions[iteration, :], bins=self.cells_number, range=(0, self.domain_size))
         return (self.particles_number) / self.cells_number - histograms
 
-    def update_potential(self, density):
+    def compute_potential_relaxation(self, density):
         """
         Update potential based on charge density using relaxation method.
 
@@ -122,7 +122,7 @@ class Simulation:
                 break
             return new_potential
 
-    def compute_potential(self, density):
+    def compute_potential_matrix_inversion(self, density):
         """
         Compute potential based on charge density.
 
@@ -132,7 +132,8 @@ class Simulation:
         # Returns:
             `numpy.ndarray`: Potential array.
         """
-        return np.linalg.solve(self.potential_matrix, - density * self.FACTOR)  # TODO : corriger
+        potential = np.linalg.solve(self.potential_matrix, - density * self.FACTOR)  # TODO : corriger
+        self.potential_array = np.vstack((self.potential_array, potential))
 
     def compute_potential_Fourier(self, density):
         """
@@ -147,7 +148,8 @@ class Simulation:
         density_fourier = np.fft.fft(density)
         potential_fourier = density_fourier / (
                     -np.fft.fftfreq(self.cells_number) * np.fft.fftfreq(self.cells_number)) * self.FACTOR
-        return np.fft.ifft(potential_fourier)
+        potential = np.fft.ifft(potential_fourier)
+        self.potential_array = np.vstack((self.potential_array, potential))
 
     def compute_electric_field(self):
         """
@@ -232,12 +234,12 @@ class Simulation:
             None
         """
         for iteration in tqdm(range(self.iterations_number)):
-            charge_density = self.compute_charge_density(iteration)
-            # self.potential_array = self.compute_potential(charge_density)
-            # self.update_potential(charge_density)
-            # potential = self.compute_potential_Fourier(charge_density)
-            potential = self.compute_potential_jacobi(charge_density)
-            self.potential_array = np.vstack((self.potential_array, potential))
+            charge_density = self.compute_charge_density(iteration) # WORKS
+            # self.compute_potential_matrix_inversion(charge_density)
+            self.compute_potential_relaxation(charge_density)
+            # self.compute_potential_Fourier(charge_density
+            # potential = self.compute_potential_jacobi(charge_density
+            # self.potential_array = np.vstack((self.potential_array, potential))
             electric_field = self.compute_electric_field()
             particle_electric_field = self.compute_particle_electric_field(electric_field, iteration)
             force = self.compute_force(particle_electric_field)

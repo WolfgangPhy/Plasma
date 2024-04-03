@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 from matplotlib.animation import FuncAnimation
+from matplotlib.animation import FFMpegWriter
 
 class Visualizer:
     """
@@ -35,7 +36,7 @@ class Visualizer:
         plt.title('Phase space')
 
         # Show the plot
-        plt.show()
+        plt.savefig('phase_space.png')
         
     @staticmethod
     def animate_results(file_path='results.npz'):
@@ -60,7 +61,7 @@ class Visualizer:
         # Initialization function for the animation
         def init():
             ax.set_xlim(0., 1.)
-            ax.set_ylim(-100, 100)
+            ax.set_ylim(-50, 50)
             return scatter,
 
         # Animation function
@@ -73,6 +74,4 @@ class Visualizer:
         # Create the animation
         num_frames = len(dt)
         animation = FuncAnimation(fig, update, frames=num_frames, init_func=init, blit=True)
-
-        # Show the animation
-        plt.show()
+        animation.save('animation.gif', writer='PillowWriter', fps=60)
