@@ -22,35 +22,27 @@ class Visualizer:
         
         """
         # Load data from npz file
-        positions_df = pd.read_csv('positions.csv')
-        velocities_df = pd.read_csv('velocities.csv')
-        # Convert the 500th row of the dataframes to numpy arrays
-        positions = positions_df.iloc[500].to_numpy()
-        velocities = velocities_df.iloc[500].to_numpy()
-        # Determine the number of points
-        num_points = len(positions)
+        positions_df = pd.read_csv('./OutputFiles/positions.csv')
+        velocities_df = pd.read_csv('./OutputFiles/velocities.csv')
+        last_positions = positions_df.iloc[500]
+        last_velocities = velocities_df.iloc[500]
+        last_data = pd.DataFrame({'Position': last_positions, 'Velocity': last_velocities})
+        
+        half_length = len(last_data) // 2
+        first_half_df = last_data.iloc[:half_length]
+        second_half_df = last_data.iloc[half_length:]
+        
 
-        # Determine the indices for splitting the points into two halves
-        midpoint_index = num_points // 2
-
-        # Split positions and velocities into two halves
-        first_half_positions = positions[:midpoint_index]
-        second_half_positions = positions[midpoint_index:]
-        first_half_velocities = velocities[:midpoint_index]
-        second_half_velocities = velocities[midpoint_index:]
-
-        # Plot the first half of points in blue
-        plt.scatter(first_half_positions, first_half_velocities, s=1, color='blue')
-
-        # Plot the second half of points in orange
-        plt.scatter(second_half_positions, second_half_velocities, s=1, color='orange')
+        sns.set_theme()
+        sns.scatterplot(x='Position', y='Velocity', data=first_half_df, s=1, color='green')
+        sns.scatterplot(x='Position', y='Velocity', data=second_half_df, s=1, color='purple')
 
         plt.xlabel('Position')
         plt.ylabel('Velocity')
         plt.title('Phase space')
 
         # Show the plot
-        plt.savefig('phase_space.png')
+        plt.savefig('Plots/phase_space.png')
 
         
     @staticmethod
@@ -89,4 +81,4 @@ class Visualizer:
         # Create the animation
         num_frames = len(dt)
         animation = FuncAnimation(fig, update, frames=num_frames, init_func=init, blit=True)
-        animation.save('animation.gif', writer='PillowWriter', fps=120)
+        animation.save('Plots/animation.gif', writer='PillowWriter', fps=120)

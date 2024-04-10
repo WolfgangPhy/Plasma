@@ -32,8 +32,8 @@ class MainProgram:
         """
         Runs the simulation and visualizes the results using the Simulation and Visualizer classes.
         """
-        sim = Simulation(self.parameters)
-        sim.run()
+        #sim = Simulation(self.parameters)
+        #sim.run()
         Visualizer.plot_phase_space()
         #Visualizer.animate_results()
 

@@ -91,9 +91,9 @@ class Simulation:
         self.velocities = np.concatenate((negative_velocities, positive_velocities))
         
         position_df = pd.DataFrame([self.positions])
-        position_df.to_csv('positions.csv', index=False)
+        position_df.to_csv('./OutputFiles/positions.csv', index=False)
         velocity_df = pd.DataFrame([self.velocities])
-        velocity_df.to_csv('velocities.csv', index=False)
+        velocity_df.to_csv('./OutputFiles/velocities.csv', index=False)
 
     def compute_charge_density(self, iteration):
         """
@@ -210,7 +210,7 @@ class Simulation:
             None
         """
         self.dt = np.min(self.dx / np.abs(self.velocities))
-        with open('dt.csv', 'a') as f:
+        with open('./OutputFiles/dt.csv', 'a') as f:
             f.write(str(self.dt) + '\n')
 
     def update_positions_velocities(self, force, iteration):
@@ -231,8 +231,8 @@ class Simulation:
         self.velocities = new_velocities
         
         # Save positions and velocities in a new column of the csv file
-        pd.DataFrame([self.positions]).to_csv('positions.csv', mode='a', header=False, index=False)
-        pd.DataFrame([self.velocities]).to_csv('velocities.csv', mode='a', header=False, index=False)
+        pd.DataFrame([self.positions]).to_csv('./OutputFiles/positions.csv', mode='a', header=False, index=False)
+        pd.DataFrame([self.velocities]).to_csv('./OutputFiles/velocities.csv', mode='a', header=False, index=False)
         
 
     def run(self):
