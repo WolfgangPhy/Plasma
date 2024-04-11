@@ -2,6 +2,7 @@ import json
 from Simulation import Simulation
 from Visualizer import Visualizer
 
+
 class MainProgram:
     """
     Main class to run the Particle-in-Cell simulation of a 1D plasma and visualize the results.
@@ -32,8 +33,8 @@ class MainProgram:
         """
         Runs the simulation and visualizes the results using the Simulation and Visualizer classes.
         """
-        #sim = Simulation(self.parameters)
-        #sim.run()
+        sim = Simulation(self.parameters)
+        sim.run()
         Visualizer.plot_phase_space()
         #Visualizer.animate_results()
 

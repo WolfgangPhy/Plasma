@@ -2,6 +2,7 @@ import numpy as np
 from tqdm import tqdm
 import pandas as pd
 
+
 class Simulation:
     """
     Class for simulating a 1D plasma using the Particle-in-Cell method.
@@ -41,6 +42,19 @@ class Simulation:
     """
 
     def __init__(self, parameters):
+        self.velocities = None
+        self.positions = None
+        self.potential_matrix = None
+        self.max_iteration_number_potential = None
+        self.tolerance = None
+        self.iterations_number = None
+        self.max_initial_velocity_deviation = None
+        self.initial_velocity = None
+        self.cells_number = None
+        self.domain_size = None
+        self.particle_mass = None
+        self.particle_charge = None
+        self.particles_number = None
         self.potential_array = None
         self.parameters = parameters
         self.dx = self.parameters['domain_size'] / self.parameters['cells_number']
@@ -75,27 +89,29 @@ class Simulation:
         # Returns:
             None
         """
-        self.potential_matrix = -2 * np.eye(self.cells_number) + np.eye(self.cells_number, k=1) + \
-                                np.eye(self.cells_number, k=-1)
+        self.potential_matrix = (-2 * np.eye(self.cells_number) + np.eye(self.cells_number, k=1) +
+                                 np.eye(self.cells_number, k=-1))
         self.potential_matrix[0, -1] = self.potential_matrix[-1, 0] = 1
 
         self.positions = np.random.uniform(0, self.domain_size, size=self.particles_number)
         self.potential_array = np.zeros(self.cells_number)
-        
-        negative_velocities = -np.ones(self.particles_number//2)*self.initial_velocity+ \
-            np.random.uniform(-self.max_initial_velocity_deviation, self.max_initial_velocity_deviation,
-                              size=self.particles_number//2)
-        positive_velocities = np.ones(self.particles_number//2)*self.initial_velocity+ \
-            np.random.uniform(-self.max_initial_velocity_deviation, self.max_initial_velocity_deviation,
-                                size=self.particles_number//2)
+
+        negative_velocities = (-np.ones(self.particles_number // 2) * self.initial_velocity +
+                               np.random.uniform(-self.max_initial_velocity_deviation,
+                                                 self.max_initial_velocity_deviation,
+                                                 size=self.particles_number // 2))
+        positive_velocities = (np.ones(self.particles_number // 2) * self.initial_velocity +
+                               np.random.uniform(-self.max_initial_velocity_deviation,
+                                                 self.max_initial_velocity_deviation,
+                                                 size=self.particles_number // 2))
         self.velocities = np.concatenate((negative_velocities, positive_velocities))
-        
+
         position_df = pd.DataFrame([self.positions])
         position_df.to_csv('./OutputFiles/positions.csv', index=False)
         velocity_df = pd.DataFrame([self.velocities])
         velocity_df.to_csv('./OutputFiles/velocities.csv', index=False)
 
-    def compute_charge_density(self, iteration):
+    def compute_charge_density(self):
         """
         Compute charge density at a given iteration.
 
@@ -106,7 +122,7 @@ class Simulation:
             `numpy.ndarray`: Charge density array.
         """
         histograms, _ = np.histogram(self.positions, bins=self.cells_number, range=(0, self.domain_size))
-        return (self.particles_number) / self.cells_number - histograms
+        return self.particles_number / self.cells_number - histograms
 
     def compute_potential_relaxation(self, density):
         """
@@ -158,7 +174,7 @@ class Simulation:
         """
         density_fourier = np.fft.fft(density)
         potential_fourier = density_fourier / (
-                    -np.fft.fftfreq(self.cells_number) * np.fft.fftfreq(self.cells_number)) * self.FACTOR
+                -np.fft.fftfreq(self.cells_number) * np.fft.fftfreq(self.cells_number)) * self.FACTOR
         potential = np.fft.ifft(potential_fourier)
         self.potential_array = np.vstack((self.potential_array, potential))
 
@@ -174,7 +190,7 @@ class Simulation:
         """
         return - np.gradient(self.potential_array, self.dx)
 
-    def compute_particle_electric_field(self, electric_field, iteration):
+    def compute_particle_electric_field(self, electric_field):
         """
         Compute particle electric field.
 
@@ -199,7 +215,7 @@ class Simulation:
         """
         return self.particle_charge * particle_electric_field
 
-    def compute_time_step(self, iteration):
+    def compute_time_step(self):
         """
         Compute time step based on particle velocities.
 
@@ -213,7 +229,7 @@ class Simulation:
         with open('./OutputFiles/dt.csv', 'a') as f:
             f.write(str(self.dt) + '\n')
 
-    def update_positions_velocities(self, force, iteration):
+    def update_positions_velocities(self, force):
         """
         Update particle positions and velocities using Euler method.
 
@@ -229,11 +245,10 @@ class Simulation:
         new_velocities = self.velocities + self.dt * (1 / self.particle_mass) * force
         self.positions = new_positions
         self.velocities = new_velocities
-        
+
         # Save positions and velocities in a new column of the csv file
         pd.DataFrame([self.positions]).to_csv('./OutputFiles/positions.csv', mode='a', header=False, index=False)
         pd.DataFrame([self.velocities]).to_csv('./OutputFiles/velocities.csv', mode='a', header=False, index=False)
-        
 
     def run(self):
         """
@@ -242,15 +257,15 @@ class Simulation:
         # Returns:
             None
         """
-        for iteration in tqdm(range(self.iterations_number)):
-            charge_density = self.compute_charge_density(iteration) # WORKS
+        for _ in tqdm(range(self.iterations_number)):
+            charge_density = self.compute_charge_density()  # WORKS
             # self.compute_potential_matrix_inversion(charge_density)
             self.compute_potential_relaxation(charge_density)
             # self.compute_potential_Fourier(charge_density
             # potential = self.compute_potential_jacobi(charge_density
             # self.potential_array = np.vstack((self.potential_array, potential))
             electric_field = self.compute_electric_field()
-            particle_electric_field = self.compute_particle_electric_field(electric_field, iteration)
+            particle_electric_field = self.compute_particle_electric_field(electric_field)
             force = self.compute_force(particle_electric_field)
-            self.compute_time_step(iteration)
-            self.update_positions_velocities(force, iteration)
+            self.compute_time_step()
+            self.update_positions_velocities(force)
