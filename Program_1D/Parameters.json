@@ -6,7 +6,7 @@
     "cells_number": 500,
     "max_initial_velocity_deviation": 0.01,
     "initial_velocity": 0.1,
-    "iterations_number": 1000,
+    "iterations_number": 2000,
     "tolerance": 0.001,
     "max_iteration_number_potential": 100  
 }
