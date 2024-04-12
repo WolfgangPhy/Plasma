@@ -59,7 +59,7 @@ class Simulation:
         self.parameters = parameters
         self.dx = self.parameters['domain_size'] / self.parameters['cells_number']
         self.dt = None
-        self.EPSILON_0 = 0.55
+        self.EPSILON_0 = 0.57 # m^(-3) s^2 ProtonMass^(-1) ElementaryCharge^2
         self.FACTOR = self.dx * self.dx / self.EPSILON_0
         self.set_initial_conditions()
         self.init_arrays()
