@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 from matplotlib.animation import FuncAnimation
-
+from FileHelper import FileHelper
 
 class Visualizer:
     """
@@ -53,7 +53,7 @@ class Visualizer:
         ax[1].set_xlabel('Position')
         ax[1].set_ylabel('Velocity')
         
-        plt.savefig('Plots/phase_space.png')
+        plt.savefig(FileHelper.create_plot_filename())
 
     @staticmethod
     def animate_results():
