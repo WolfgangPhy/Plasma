@@ -1,12 +1,12 @@
 {
-    "particles_number": 10000,
+    "particles_number": 100000,
     "particle_charge": 1.0,
     "particle_mass": 1.0,
     "domain_size": 100,
     "cells_number": 300,
     "max_initial_velocity_deviation": 0.01,
     "initial_velocity": 1,
-    "iterations_number": 50000,
+    "iterations_number": 1000,
     "tolerance": 0.001,
     "max_iteration_number_potential": 100  
 }
