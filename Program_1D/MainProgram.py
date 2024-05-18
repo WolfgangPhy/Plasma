@@ -36,7 +36,6 @@ class MainProgram:
         sim = Simulation(self.parameters)
         sim.run()
         Visualizer.plot_phase_space()
-        #Visualizer.animate_results()
 
 
 if __name__ == '__main__':

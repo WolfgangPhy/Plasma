@@ -16,6 +16,12 @@ class FileHelper:
         plot_filename += f"DS_{parameters['domain_size']}_"
         plot_filename += f"CN_{parameters['cells_number']}_"
         plot_filename += f"V_{parameters['initial_velocity']}_"
+        if(parameters['velocity_repartition'] == 'random'):
+            plot_filename += f"VR_R"
+        elif(parameters['velocity_repartition'] == 'normal'):
+            plot_filename += f"VR_N"
+        elif(parameters['velocity_repartition'] == '2streams'):
+            plot_filename += f"VR_2S"
         plot_filename += f"IN_{thousands_iterations}k_"
-        
+        plot_filename = plot_filename.replace('.', '-')
         return plot_filename

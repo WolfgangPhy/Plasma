@@ -56,6 +56,7 @@ class Simulation:
         self.particle_charge = None
         self.particles_number = None
         self.potential_array = None
+        self.velocity_repartition = None
         self.parameters = parameters
         self.dx = self.parameters['domain_size'] / self.parameters['cells_number']
         self.dt = None
@@ -81,6 +82,7 @@ class Simulation:
         self.iterations_number = self.parameters['iterations_number']
         self.tolerance = self.parameters['tolerance']
         self.max_iteration_number_potential = self.parameters['max_iteration_number_potential']
+        self.velocity_repartition = self.parameters['velocity_repartition']
 
     def init_arrays(self):
         """
@@ -95,16 +97,21 @@ class Simulation:
 
         self.positions = np.random.uniform(0, self.domain_size, size=self.particles_number)
         self.potential_array = np.zeros(self.cells_number)
-
-        negative_velocities = (-np.ones(self.particles_number // 2) * self.initial_velocity +
-                               np.random.uniform(-self.max_initial_velocity_deviation,
-                                                 self.max_initial_velocity_deviation,
-                                                 size=self.particles_number // 2))
-        positive_velocities = (np.ones(self.particles_number // 2) * self.initial_velocity +
-                               np.random.uniform(-self.max_initial_velocity_deviation,
-                                                 self.max_initial_velocity_deviation,
-                                                 size=self.particles_number // 2))
-        self.velocities = np.concatenate((negative_velocities, positive_velocities))
+        
+        if(self.velocity_repartition == "2streams"):
+            negative_velocities = (-np.ones(self.particles_number // 2) * self.initial_velocity +
+                                np.random.uniform(-self.max_initial_velocity_deviation,
+                                                    self.max_initial_velocity_deviation,
+                                                    size=self.particles_number // 2))
+            positive_velocities = (np.ones(self.particles_number // 2) * self.initial_velocity +
+                                np.random.uniform(-self.max_initial_velocity_deviation,
+                                                    self.max_initial_velocity_deviation,
+                                                    size=self.particles_number // 2))
+            self.velocities = np.concatenate((negative_velocities, positive_velocities))
+        elif(self.velocity_repartition == "random"):
+            self.velocities = np.random.uniform(-self.initial_velocity, self.initial_velocity, size=self.particles_number)
+        elif(self.velocity_repartition == "normal"):
+            self.velocities = np.random.normal(0, self.initial_velocity, size=self.particles_number)
 
         position_df = pd.DataFrame([self.positions])
         position_df.to_csv('./OutputFiles/positions.csv', index=False)
@@ -261,8 +268,8 @@ class Simulation:
             charge_density = self.compute_charge_density()  # WORKS
             # self.compute_potential_matrix_inversion(charge_density)
             self.compute_potential_relaxation(charge_density)
-            # self.compute_potential_Fourier(charge_density
-            # potential = self.compute_potential_jacobi(charge_density
+            # self.compute_potential_Fourier(charge_density)
+            # potential = self.compute_potential_jacobi(charge_density)
             # self.potential_array = np.vstack((self.potential_array, potential))
             electric_field = self.compute_electric_field()
             particle_electric_field = self.compute_particle_electric_field(electric_field)
