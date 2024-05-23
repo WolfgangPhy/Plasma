@@ -1,6 +1,7 @@
 import json
 from Simulation import Simulation
 from Visualizer import Visualizer
+from FileHelper import FileHelper
 
 
 class MainProgram:
@@ -21,6 +22,7 @@ class MainProgram:
         """
         self.parameters = None
         self.set_parameters()
+        self.directory_name = FileHelper.create_test_directory()
 
     def set_parameters(self):
         """
@@ -33,9 +35,10 @@ class MainProgram:
         """
         Runs the simulation and visualizes the results using the Simulation and Visualizer classes.
         """
-        sim = Simulation(self.parameters)
+        sim = Simulation(self.parameters, self.directory_name)
         sim.run()
-        Visualizer.plot_phase_space()
+        visualizer = Visualizer()
+        visualizer.plot_phase_space_foreach_saved_step()
 
 
 if __name__ == '__main__':

@@ -2,26 +2,55 @@ import os
 import json
 
 class FileHelper:
+    """
+    Class for handling file operations.
+    """
+    @staticmethod
+    def create_test_directory():
+        """
+        Creates a filename for the plot based on the parameters in the 'Parameters.json' file.
+        
+        # Returns:
+            str: The filename for the plot.
+        """
+        test_directory = FileHelper.get_test_directory_name()
+        
+        if not os.path.exists(test_directory):
+            os.makedirs(test_directory)
+        elif input("Directory already exists. Do you want to do calculations in this directory? (y/n): ") == "y":
+            return test_directory
+        else:
+            raise ValueError("Directory already exists")
+        
+        output_files_directory = os.path.join(test_directory, 'OutputFiles')
+        plots_directory = os.path.join(test_directory, 'Plots')
+        
+        os.makedirs(output_files_directory)
+        os.makedirs(plots_directory)
+        
+        return test_directory
     
     @staticmethod
-    def create_plot_filename():
+    def get_test_directory_name():
+        
         with open('Parameters.json', 'r') as file:
             parameters = json.load(file)
         
-        
-        thousands_iterations = parameters['iterations_number'] // 1000
         thousands_particles = parameters['particles_number'] // 1000
-        plot_filename = 'Plots/PS_'
-        plot_filename += f"PN_{thousands_particles}k_"
-        plot_filename += f"DS_{parameters['domain_size']}_"
-        plot_filename += f"CN_{parameters['cells_number']}_"
-        plot_filename += f"V_{parameters['initial_velocity']}_"
+        test_directory = f"PN_{thousands_particles}k_"
+        test_directory += f"DS_{parameters['domain_size']}_"
+        test_directory += f"CN_{parameters['cells_number']}_"
+        test_directory += f"V_{parameters['initial_velocity']}_"
+        test_directory += f"PC_{parameters['particle_charge']}_"
+        test_directory += f"PM_{parameters['particle_mass']}_"
         if(parameters['velocity_repartition'] == 'random'):
-            plot_filename += f"VR_R"
+            test_directory += f"VR_R"
         elif(parameters['velocity_repartition'] == 'normal'):
-            plot_filename += f"VR_N"
+            test_directory += f"VR_N"
         elif(parameters['velocity_repartition'] == '2streams'):
-            plot_filename += f"VR_2S"
-        plot_filename += f"IN_{thousands_iterations}k_"
-        plot_filename = plot_filename.replace('.', '-')
-        return plot_filename
+            test_directory += f"VR_2S"
+            
+        test_directory = test_directory.replace('.', '-')
+        test_directory = os.path.join('Tests', test_directory)
+        
+        return test_directory

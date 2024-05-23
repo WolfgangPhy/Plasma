@@ -1,6 +1,7 @@
 import numpy as np
 from tqdm import tqdm
 import pandas as pd
+import os
 
 
 class Simulation:
@@ -41,7 +42,7 @@ class Simulation:
 
     """
 
-    def __init__(self, parameters):
+    def __init__(self, parameters, directory_name):
         self.velocities = None
         self.positions = None
         self.potential_matrix = None
@@ -58,6 +59,9 @@ class Simulation:
         self.potential_array = None
         self.velocity_repartition = None
         self.parameters = parameters
+        self.directory_name = directory_name
+        self.positions_filepath = os.path.join(self.directory_name, 'OutputFiles', 'positions.csv')
+        self.velocities_filepath = os.path.join(self.directory_name, 'OutputFiles', 'velocities.csv')
         self.dx = self.parameters['domain_size'] / self.parameters['cells_number']
         self.dt = None
         self.EPSILON_0 = 0.57 # m^(-3) s^2 ProtonMass^(-1) ElementaryCharge^2
@@ -114,9 +118,9 @@ class Simulation:
             self.velocities = np.random.normal(0, self.initial_velocity, size=self.particles_number)
 
         position_df = pd.DataFrame([self.positions])
-        position_df.to_csv('./OutputFiles/positions.csv', index=False)
+        position_df.to_csv(self.positions_filepath, index=False)
         velocity_df = pd.DataFrame([self.velocities])
-        velocity_df.to_csv('./OutputFiles/velocities.csv', index=False)
+        velocity_df.to_csv(self.velocities_filepath, index=False)
 
     def compute_charge_density(self):
         """
@@ -253,10 +257,10 @@ class Simulation:
         self.positions = new_positions
         self.velocities = new_velocities
 
-        # Save positions and velocities in a new column of the csv file
-        pd.DataFrame([self.positions]).to_csv('./OutputFiles/positions.csv', mode='a', header=False, index=False)
-        pd.DataFrame([self.velocities]).to_csv('./OutputFiles/velocities.csv', mode='a', header=False, index=False)
-
+    def save_results(self):
+        pd.DataFrame([self.positions]).to_csv(self.positions_filepath, mode='a', header=False, index=False)
+        pd.DataFrame([self.velocities]).to_csv(self.velocities_filepath, mode='a', header=False, index=False)
+        
     def run(self):
         """
         Run the simulation.
@@ -264,7 +268,7 @@ class Simulation:
         # Returns:
             None
         """
-        for _ in tqdm(range(self.iterations_number)):
+        for i in tqdm(range(self.iterations_number)):
             charge_density = self.compute_charge_density()  # WORKS
             # self.compute_potential_matrix_inversion(charge_density)
             self.compute_potential_relaxation(charge_density)
@@ -276,3 +280,5 @@ class Simulation:
             force = self.compute_force(particle_electric_field)
             self.compute_time_step()
             self.update_positions_velocities(force)
+            if(i % 500 == 0 or i == self.iterations_number):
+                self.save_results()
