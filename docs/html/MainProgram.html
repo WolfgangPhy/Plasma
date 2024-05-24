@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MainProgram module &mdash; Plasma Instabilities with a 1D Particle-In-Cell  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Simulation module" href="Simulation.html" />
+    <link rel="prev" title="FileHelper module" href="FileHelper.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Plasma Instabilities with a 1D Particle-In-Cell
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="FileHelper.html">FileHelper module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">MainProgram module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#MainProgram.MainProgram"><code class="docutils literal notranslate"><span class="pre">MainProgram</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#MainProgram.MainProgram.execute"><code class="docutils literal notranslate"><span class="pre">MainProgram.execute()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#MainProgram.MainProgram.set_parameters"><code class="docutils literal notranslate"><span class="pre">MainProgram.set_parameters()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#MainProgram.MainProgram.simulate"><code class="docutils literal notranslate"><span class="pre">MainProgram.simulate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#MainProgram.MainProgram.visualize"><code class="docutils literal notranslate"><span class="pre">MainProgram.visualize()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Simulation.html">Simulation module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Visualizer.html">Visualizer module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Plasma Instabilities with a 1D Particle-In-Cell</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">src</a></li>
+      <li class="breadcrumb-item active">MainProgram module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/MainProgram.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-MainProgram">
+<span id="mainprogram-module"></span><h1>MainProgram module<a class="headerlink" href="#module-MainProgram" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="MainProgram.MainProgram">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">MainProgram.</span></span><span class="sig-name descname"><span class="pre">MainProgram</span></span><a class="headerlink" href="#MainProgram.MainProgram" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Main class to run the Particle-in-Cell simulation of a 1D plasma and visualize the results.</p>
+<dl class="simple">
+<dt># Attributes:</dt><dd><ul class="simple">
+<li><p><cite>parameters (dict)</cite>: Dictionary containing simulation parameters loaded from ‘Parameters.json’.</p></li>
+<li><p><cite>directory_name (str)</cite>: Name of the directory where the simulation results are saved.</p></li>
+</ul>
+</dd>
+<dt># Methods:</dt><dd><ul class="simple">
+<li><p><cite>set_parameters()</cite>: Loads simulation parameters from ‘Parameters.json’.</p></li>
+<li><p><cite>execute()</cite>: Execute the simulation and visualizes the results using the Simulation and Visualizer classes.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="MainProgram.MainProgram.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#MainProgram.MainProgram.execute" title="Link to this definition"></a></dt>
+<dd><p>Execute the simulation and visualizes the results using the Simulation and Visualizer classes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MainProgram.MainProgram.set_parameters">
+<span class="sig-name descname"><span class="pre">set_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#MainProgram.MainProgram.set_parameters" title="Link to this definition"></a></dt>
+<dd><p>Loads simulation parameters from ‘Parameters.json’.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MainProgram.MainProgram.simulate">
+<span class="sig-name descname"><span class="pre">simulate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#MainProgram.MainProgram.simulate" title="Link to this definition"></a></dt>
+<dd><p>Runs the simulation using the Simulation class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MainProgram.MainProgram.visualize">
+<span class="sig-name descname"><span class="pre">visualize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#MainProgram.MainProgram.visualize" title="Link to this definition"></a></dt>
+<dd><p>Visualizes the results of the simulation using the Visualizer class.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="FileHelper.html" class="btn btn-neutral float-left" title="FileHelper module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Simulation.html" class="btn btn-neutral float-right" title="Simulation module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Marty-Bazan Jeanne, Lolivier Antonin.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visualizer module &mdash; Plasma Instabilities with a 1D Particle-In-Cell  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Simulation module" href="Simulation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Plasma Instabilities with a 1D Particle-In-Cell
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="FileHelper.html">FileHelper module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MainProgram.html">MainProgram module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Simulation.html">Simulation module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Visualizer module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Visualizer.Visualizer"><code class="docutils literal notranslate"><span class="pre">Visualizer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Visualizer.Visualizer.plot_electric_field"><code class="docutils literal notranslate"><span class="pre">Visualizer.plot_electric_field()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Visualizer.Visualizer.plot_electric_field_for_single_cell"><code class="docutils literal notranslate"><span class="pre">Visualizer.plot_electric_field_for_single_cell()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Visualizer.Visualizer.plot_electric_field_foreach_saved_step"><code class="docutils literal notranslate"><span class="pre">Visualizer.plot_electric_field_foreach_saved_step()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Visualizer.Visualizer.plot_phase_space"><code class="docutils literal notranslate"><span class="pre">Visualizer.plot_phase_space()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Visualizer.Visualizer.plot_phase_space_foreach_saved_step"><code class="docutils literal notranslate"><span class="pre">Visualizer.plot_phase_space_foreach_saved_step()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Visualizer.Visualizer.plot_potential"><code class="docutils literal notranslate"><span class="pre">Visualizer.plot_potential()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Visualizer.Visualizer.plot_potential_for_single_cell"><code class="docutils literal notranslate"><span class="pre">Visualizer.plot_potential_for_single_cell()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Visualizer.Visualizer.plot_potential_foreach_saved_step"><code class="docutils literal notranslate"><span class="pre">Visualizer.plot_potential_foreach_saved_step()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Visualizer.Visualizer.plot_single_particle_phase_space"><code class="docutils literal notranslate"><span class="pre">Visualizer.plot_single_particle_phase_space()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Visualizer.Visualizer.plot_single_particle_position"><code class="docutils literal notranslate"><span class="pre">Visualizer.plot_single_particle_position()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Plasma Instabilities with a 1D Particle-In-Cell</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">src</a></li>
+      <li class="breadcrumb-item active">Visualizer module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Visualizer.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-Visualizer">
+<span id="visualizer-module"></span><h1>Visualizer module<a class="headerlink" href="#module-Visualizer" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="Visualizer.Visualizer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Visualizer.</span></span><span class="sig-name descname"><span class="pre">Visualizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iteration_save_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position_filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'positions.csv'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">velocity_filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'velocities.csv'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Visualizer.Visualizer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for visualizing the results of a particle-in-cell simulation.</p>
+<dl class="simple">
+<dt># Attributes:</dt><dd><ul class="simple">
+<li><p><cite>directory_name (str)</cite>: Name of the directory where the simulation results are saved.</p></li>
+<li><p><cite>position_filepath (str)</cite>: Path to the file containing the particle positions.</p></li>
+<li><p><cite>velocity_filepath (str)</cite>: Path to the file containing the particle velocities.</p></li>
+<li><p><cite>electric_field_filepath (str)</cite>: Path to the file containing the electric field values.</p></li>
+<li><p><cite>potential_filepath (str)</cite>: Path to the file containing the potential values.</p></li>
+<li><p><cite>followed_particle_filepath (str)</cite>: Path to the file containing the followed particle data.</p></li>
+<li><p><cite>followed_cell_filepath (str)</cite>: Path to the file containing the followed cell data.</p></li>
+<li><p><cite>time (numpy.ndarray)</cite>: Array containing the time values.</p></li>
+<li><p><cite>iteration_save_rate (int)</cite>: Number of iterations between each saved step.</p></li>
+</ul>
+</dd>
+<dt># Methods:</dt><dd><ul class="simple">
+<li><p><cite>plot_phase_space(iteration_number=-1)</cite>: Plot the phase space of the particles at a specific iteration.</p></li>
+<li><p><cite>plot_phase_space_foreach_saved_step()</cite>: Plot the phase space of the particles for each saved step.</p></li>
+<li><p><cite>plot_electric_field(iteration_number=-1)</cite>: Plot the electric field at a specific iteration.</p></li>
+<li><p><cite>plot_electric_field_foreach_saved_step()</cite>: Plot the electric field for each saved step.</p></li>
+<li><p><cite>plot_potential(iteration_number=-1)</cite>: Plot the potential at a specific iteration.</p></li>
+<li><p><cite>plot_potential_foreach_saved_step()</cite>: Plot the potential for each saved step.</p></li>
+<li><p><cite>plot_single_particle_position()</cite>: Plot the position of a followed particle over time.</p></li>
+<li><p><cite>plot_single_particle_phase_space()</cite>: Plot the phase space of a single followed particle.</p></li>
+<li><p><cite>plot_potential_for_single_cell()</cite>: Plot the potential for a single cell over time.</p></li>
+<li><p><cite>plot_electric_field_fot_single_cell()</cite>: Plot the electric field for a single cell over time.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="Visualizer.Visualizer.plot_electric_field">
+<span class="sig-name descname"><span class="pre">plot_electric_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iteration_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Visualizer.Visualizer.plot_electric_field" title="Link to this definition"></a></dt>
+<dd><p>Plot the electric field at a specific iteration.</p>
+<dl class="simple">
+<dt># Args:</dt><dd><dl class="simple">
+<dt>-<cite>iteration_number</cite> (int, optional): The iteration number at which the electric field</dt><dd><p>should be plotted. Defaults to -1.</p>
+</dd>
+</dl>
+</dd>
+<dt># Remarks:</dt><dd><p>If <cite>iteration_number</cite> is -1, the electric field for the last iteration is plotted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Visualizer.Visualizer.plot_electric_field_for_single_cell">
+<span class="sig-name descname"><span class="pre">plot_electric_field_for_single_cell</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Visualizer.Visualizer.plot_electric_field_for_single_cell" title="Link to this definition"></a></dt>
+<dd><p>Plot the electric field for a single cell over time.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Visualizer.Visualizer.plot_electric_field_foreach_saved_step">
+<span class="sig-name descname"><span class="pre">plot_electric_field_foreach_saved_step</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Visualizer.Visualizer.plot_electric_field_foreach_saved_step" title="Link to this definition"></a></dt>
+<dd><p>Plot the electric field for each saved step according to the <cite>iteration_save_rate</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Visualizer.Visualizer.plot_phase_space">
+<span class="sig-name descname"><span class="pre">plot_phase_space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iteration_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Visualizer.Visualizer.plot_phase_space" title="Link to this definition"></a></dt>
+<dd><p>Plot the phase space of the particles at a specific iteration.</p>
+<dl class="simple">
+<dt># Args:</dt><dd><ul class="simple">
+<li><p><cite>iteration_number</cite> (int, optional): The iteration number at which the phase space should be plotted. Defaults to -1.</p></li>
+</ul>
+</dd>
+<dt># Remarks:</dt><dd><p>If <cite>iteration_number</cite> is -1, the phase space for the last iteration is plotted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Visualizer.Visualizer.plot_phase_space_foreach_saved_step">
+<span class="sig-name descname"><span class="pre">plot_phase_space_foreach_saved_step</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Visualizer.Visualizer.plot_phase_space_foreach_saved_step" title="Link to this definition"></a></dt>
+<dd><p>Plot the phase space of the particles for each saved step according to the <cite>iteration_save_rate</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Visualizer.Visualizer.plot_potential">
+<span class="sig-name descname"><span class="pre">plot_potential</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iteration_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Visualizer.Visualizer.plot_potential" title="Link to this definition"></a></dt>
+<dd><p>Plot the potential at a specific iteration.</p>
+<dl class="simple">
+<dt># Args:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt><cite>iteration_number</cite> (int, optional): The iteration number at which the potential</dt><dd><p>should be plotted. Defaults to -1.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Visualizer.Visualizer.plot_potential_for_single_cell">
+<span class="sig-name descname"><span class="pre">plot_potential_for_single_cell</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Visualizer.Visualizer.plot_potential_for_single_cell" title="Link to this definition"></a></dt>
+<dd><p>Plot the potential for a single cell over time.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Visualizer.Visualizer.plot_potential_foreach_saved_step">
+<span class="sig-name descname"><span class="pre">plot_potential_foreach_saved_step</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Visualizer.Visualizer.plot_potential_foreach_saved_step" title="Link to this definition"></a></dt>
+<dd><p>Plot the potential for each saved step according to the <cite>iteration_save_rate</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Visualizer.Visualizer.plot_single_particle_phase_space">
+<span class="sig-name descname"><span class="pre">plot_single_particle_phase_space</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Visualizer.Visualizer.plot_single_particle_phase_space" title="Link to this definition"></a></dt>
+<dd><p>Plot the phase space of a single followed particle.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Visualizer.Visualizer.plot_single_particle_position">
+<span class="sig-name descname"><span class="pre">plot_single_particle_position</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Visualizer.Visualizer.plot_single_particle_position" title="Link to this definition"></a></dt>
+<dd><p>Plot the position of a followed particle over time.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Simulation.html" class="btn btn-neutral float-left" title="Simulation module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Marty-Bazan Jeanne, Lolivier Antonin.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

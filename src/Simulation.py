@@ -10,6 +10,7 @@ class Simulation:
 
     # Args:
         - `parameters (dict)`: Dictionary containing simulation parameters.
+        - `directory_name (str)`: Name of the directory where the simulation results will be saved.
 
     # Attributes:
         - `dx (float)`: Spatial resolution.
@@ -43,38 +44,38 @@ class Simulation:
     """
 
     def __init__(self, parameters, directory_name):
-        self.followed_cell_index = None
-        self.followed_particle_index = None
-        self.velocities = None
-        self.positions = None
-        self.potential_matrix = None
-        self.max_iteration_number_potential = None
-        self.tolerance = None
-        self.iterations_number = None
-        self.iteration_save_rate = None
-        self.max_initial_velocity_deviation = None
-        self.initial_velocity = None
         self.cells_number = None
         self.domain_size = None
-        self.particle_mass = None
-        self.particle_charge = None
-        self.particles_number = None
-        self.potential = None
-        self.velocity_repartition = None
+        self.dt = None
         self.electric_field = None
-        self.dt = None
-        self.parameters = parameters
-        self.directory_name = directory_name
-        self.positions_filepath = os.path.join(self.directory_name, 'OutputFiles', 'positions.csv')
-        self.velocities_filepath = os.path.join(self.directory_name, 'OutputFiles', 'velocities.csv')
-        self.electric_field_filepath = os.path.join(self.directory_name, 'OutputFiles', 'electric_field.csv')
-        self.potential_filepath = os.path.join(self.directory_name, 'OutputFiles', 'potential.csv')
-        self.followed_particle_filepath = os.path.join(self.directory_name, 'OutputFiles', 'followed_particle.csv')
-        self.followed_cell_filepath = os.path.join(self.directory_name, 'OutputFiles', 'followed_cell.csv')
-        self.dx = self.parameters['domain_size'] / self.parameters['cells_number']
-        self.dt = None
+        self.followed_cell_index = None
+        self.followed_particle_index = None
+        self.max_initial_velocity_deviation = None
+        self.particle_charge = None
+        self.particle_mass = None
+        self.particles_number = None
+        self.positions = None
+        self.potential = None
+        self.initial_velocity = None
+        self.iteration_save_rate = None
+        self.iterations_number = None
+        self.velocity_repartition = None
+        self.velocities = None
+        
         self.EPSILON_0 = 0.57  # m^(-3) s^2 ProtonMass^(-1) ElementaryCharge^2
         self.FACTOR = self.dx * self.dx / self.EPSILON_0
+        
+        self.directory_name = directory_name
+        self.parameters = parameters
+        
+        self.dx = self.parameters['domain_size'] / self.parameters['cells_number']
+        self.electric_field_filepath = os.path.join(self.directory_name, 'OutputFiles', 'electric_field.csv')
+        self.followed_cell_filepath = os.path.join(self.directory_name, 'OutputFiles', 'followed_cell.csv')
+        self.followed_particle_filepath = os.path.join(self.directory_name, 'OutputFiles', 'followed_particle.csv')
+        self.positions_filepath = os.path.join(self.directory_name, 'OutputFiles', 'positions.csv')
+        self.potential_filepath = os.path.join(self.directory_name, 'OutputFiles', 'potential.csv')
+        self.velocities_filepath = os.path.join(self.directory_name, 'OutputFiles', 'velocities.csv')
+        
         self.set_initial_conditions()
         self.init_arrays()
         self.write_output_files_headers()
@@ -95,23 +96,17 @@ class Simulation:
         self.max_initial_velocity_deviation = self.parameters['max_initial_velocity_deviation']
         self.iterations_number = self.parameters['iterations_number']
         self.iteration_save_rate = self.parameters['iteration_save_rate']
-        self.tolerance = self.parameters['tolerance']
-        self.max_iteration_number_potential = self.parameters['max_iteration_number_potential']
         self.velocity_repartition = self.parameters['velocity_repartition']
         self.followed_particle_index = np.random.randint(0, self.particles_number)
         self.followed_cell_index = np.random.randint(0, self.cells_number)
 
     def init_arrays(self):
         """
-        Initialize arrays and matrices for the simulation.
+        Initialize arrays for the simulation.
 
         # Returns:
             None
         """
-        self.potential_matrix = (-2 * np.eye(self.cells_number) + np.eye(self.cells_number, k=1) +
-                                 np.eye(self.cells_number, k=-1))
-        self.potential_matrix[0, -1] = self.potential_matrix[-1, 0] = 1
-
         self.positions = np.random.uniform(0, self.domain_size, size=self.particles_number)
         self.potential = np.zeros(self.cells_number)
         self.electric_field = np.zeros(self.cells_number)
@@ -140,21 +135,23 @@ class Simulation:
         pd.DataFrame([self.electric_field]).to_csv(self.electric_field_filepath, index=False)
 
     def write_output_files_headers(self):
+        """
+        Write headers to output files.
+        
+        # Returns:
+            None
+        """
         with open(self.followed_particle_filepath, 'w') as f:
             f.write('Position,Velocity\n')
         with open(self.followed_cell_filepath, 'w') as f:
             f.write('Potential,Electric Field\n')
-        # dt.csv
         with open(os.path.join(self.directory_name, 'OutputFiles', 'dt.csv'), 'w') as f:
             f.write('dt\n')
 
     def compute_charge_density(self):
         """
-        Compute charge density at a given iteration.
-
-        # Args:
-            - `iteration (int)`: Iteration index.
-
+        Compute charge density for the current iteration.
+        
         # Returns:
             `numpy.ndarray`: Charge density array.
         """
@@ -165,13 +162,15 @@ class Simulation:
         """
         Update potential based on charge density using relaxation method.
 
-        Args:
-            density (numpy.ndarray): Charge density array.
+        # Args:
+            `density` (numpy.ndarray): Charge density array.
+            
+        # Returns:
+            None
         """
         new_potential = ((np.roll(self.potential, 1) + np.roll(self.potential, -1)) / 2 +
                          density * self.FACTOR * (1 / 2))
         self.potential = new_potential
-        return new_potential
 
     def compute_electric_field(self, potential):
         """
@@ -179,23 +178,19 @@ class Simulation:
 
         # Args:
             - `potential (numpy.ndarray)`: Potential array.
-
+            
         # Returns:
-            `numpy.ndarray`: Electric field array.
+            None
         """
 
         self.electric_field = - np.gradient(potential, self.dx)
 
     def compute_particle_electric_field(self):
         """
-        Compute particle electric field.
-
-        # Args:
-            - `electric_field (numpy.ndarray)`: Electric field array.
-            - `iteration (int)`: Iteration index.
+        Compute particle electric field using interpolation.
 
         # Returns:
-            `numpy.ndarray`: Particle electric field array.
+            `numpy.ndarray`: Array containing electric field for each particle.
         """
         return np.interp(self.positions, np.arange(len(self.electric_field)), self.electric_field)
 
@@ -204,7 +199,7 @@ class Simulation:
         Compute force on particles.
 
         # Args:
-            - `particle_electric_field (numpy.ndarray)`: Particle electric field array.
+            - `particle_electric_field (numpy.ndarray)`: Array containing electric field for each particle.
 
         # Returns:
             `numpy.ndarray`: Force array.
@@ -232,7 +227,6 @@ class Simulation:
 
         # Args:
             - `force (numpy.ndarray)`: Force array.
-            - `iteration (int)`: Iteration index.
 
         # Returns:
             None
@@ -244,12 +238,37 @@ class Simulation:
         self.velocities = new_velocities
 
     def save_global_results(self):
+        """
+        Save global results to output files.
+        
+        # Remarks:
+            - The results are saved to the following files:
+                - 'positions.csv': Particle positions.
+                - 'velocities.csv': Particle velocities.
+                - 'electric_field.csv': Electric field.
+                - 'potential.csv': Potential.
+            - These datas are saved every 'iteration_save_rate' iterations.
+        # Returns:
+            None
+        """
         pd.DataFrame([self.positions]).to_csv(self.positions_filepath, mode='a', header=False, index=False)
         pd.DataFrame([self.velocities]).to_csv(self.velocities_filepath, mode='a', header=False, index=False)
         pd.DataFrame([self.electric_field]).to_csv(self.electric_field_filepath, mode='a', header=False, index=False)
         pd.DataFrame([self.potential]).to_csv(self.potential_filepath, mode='a', header=False, index=False)
 
     def save_unit_results(self):
+        """
+        Save unit results to output files.
+        
+        # Remarks:
+            - The results are saved to the following files:
+                - 'followed_particle.csv': Followed particle position and velocity.
+                - 'followed_cell.csv': Followed cell potential and electric field.
+            - These datas are saved every iteration.
+            
+        # Returns:
+            None
+        """
         followed_particle_position = self.positions[self.followed_particle_index]
         followed_particle_velocity = self.velocities[self.followed_particle_index]
         followed_particle_df = pd.DataFrame(

@@ -5,6 +5,12 @@ import json
 class FileHelper:
     """
     Class for handling file operations.
+    
+    # Methods:
+        - `create_test_directory()`: Creates a directory to save the simulation results based on the parameters in the
+            'Parameters.json' file. (Static Method)
+        - `get_test_directory_name()`: Get the name of the directory where the simulation 
+            results are saved. (Static Method)
     """
 
     @staticmethod
@@ -13,7 +19,10 @@ class FileHelper:
         Creates a filename for the plot based on the parameters in the 'Parameters.json' file.
         
         # Returns:
-            str: The filename for the plot.
+            `str`: The filename for the plot.
+            
+        # Raises:
+            ValueError: If the directory already exists.
         """
         test_directory = FileHelper.get_test_directory_name()
 
@@ -46,7 +55,12 @@ class FileHelper:
 
     @staticmethod
     def get_test_directory_name():
+        """
+        Get the name of the directory where the simulation results are saved.
 
+        # Returns:
+            `str`: the name of the directory where the simulation results are saved.
+        """
         with open('Parameters.json', 'r') as file:
             parameters = json.load(file)
 
