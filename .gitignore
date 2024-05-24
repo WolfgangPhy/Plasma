@@ -1,5 +1,5 @@
 __pycache__/
 .idea/
-Program_1D/OutputFiles/dt.csv
-Program_1D/OutputFiles/positions.csv
-Program_1D/OutputFiles/velocities.csv
+
+Tests/*
+!Tests/
