@@ -37,8 +37,14 @@ class MainProgram:
         """
         sim = Simulation(self.parameters, self.directory_name)
         sim.run()
-        visualizer = Visualizer()
+        visualizer = Visualizer(self.parameters['iteration_save_rate'])
         visualizer.plot_phase_space_foreach_saved_step()
+        visualizer.plot_electric_field_foreach_saved_step()
+        visualizer.plot_potential_foreach_saved_step()
+        visualizer.plot_particule_path()
+        visualizer.plot_single_particle_phase_space()
+        visualizer.plot_potential_for_single_cell()
+        visualizer.plot_electric_field_fot_single_cell()
 
 
 if __name__ == '__main__':

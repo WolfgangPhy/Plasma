@@ -24,9 +24,23 @@ class FileHelper:
         
         output_files_directory = os.path.join(test_directory, 'OutputFiles')
         plots_directory = os.path.join(test_directory, 'Plots')
+        phase_space_plots_directory = os.path.join(plots_directory, 'Phase_Space')
+        followed_particule_filepath = os.path.join(plots_directory, 'Followed_Particle')
+        followed_cell_filepath = os.path.join(plots_directory, 'Followed_Cell')
+        global_plots_directory = os.path.join(plots_directory, 'Global')
+        global_eletric_field_directory = os.path.join(global_plots_directory, 'Electric_Field')
+        global_potential_directory = os.path.join(global_plots_directory, 'Potential')
+        
+        
         
         os.makedirs(output_files_directory)
         os.makedirs(plots_directory)
+        os.makedirs(phase_space_plots_directory)
+        os.makedirs(followed_particule_filepath)
+        os.makedirs(followed_cell_filepath)
+        os.makedirs(global_plots_directory)
+        os.makedirs(global_eletric_field_directory)
+        os.makedirs(global_potential_directory)
         
         return test_directory
     
