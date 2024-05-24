@@ -43,6 +43,8 @@ class Simulation:
     """
 
     def __init__(self, parameters, directory_name):
+        self.followed_cell_index = None
+        self.followed_particle_index = None
         self.velocities = None
         self.positions = None
         self.potential_matrix = None
@@ -71,7 +73,7 @@ class Simulation:
         self.followed_cell_filepath = os.path.join(self.directory_name, 'OutputFiles', 'followed_cell.csv')
         self.dx = self.parameters['domain_size'] / self.parameters['cells_number']
         self.dt = None
-        self.EPSILON_0 = 0.57 # m^(-3) s^2 ProtonMass^(-1) ElementaryCharge^2
+        self.EPSILON_0 = 0.57  # m^(-3) s^2 ProtonMass^(-1) ElementaryCharge^2
         self.FACTOR = self.dx * self.dx / self.EPSILON_0
         self.set_initial_conditions()
         self.init_arrays()
@@ -113,20 +115,21 @@ class Simulation:
         self.positions = np.random.uniform(0, self.domain_size, size=self.particles_number)
         self.potential = np.zeros(self.cells_number)
         self.electric_field = np.zeros(self.cells_number)
-        
-        if(self.velocity_repartition == "2streams"):
+
+        if self.velocity_repartition == "2streams":
             negative_velocities = (-np.ones(self.particles_number // 2) * self.initial_velocity +
-                                np.random.uniform(-self.max_initial_velocity_deviation,
-                                                    self.max_initial_velocity_deviation,
-                                                    size=self.particles_number // 2))
+                                   np.random.uniform(-self.max_initial_velocity_deviation,
+                                                     self.max_initial_velocity_deviation,
+                                                     size=self.particles_number // 2))
             positive_velocities = (np.ones(self.particles_number // 2) * self.initial_velocity +
-                                np.random.uniform(-self.max_initial_velocity_deviation,
-                                                    self.max_initial_velocity_deviation,
-                                                    size=self.particles_number // 2))
+                                   np.random.uniform(-self.max_initial_velocity_deviation,
+                                                     self.max_initial_velocity_deviation,
+                                                     size=self.particles_number // 2))
             self.velocities = np.concatenate((negative_velocities, positive_velocities))
-        elif(self.velocity_repartition == "random"):
-            self.velocities = np.random.uniform(-self.initial_velocity, self.initial_velocity, size=self.particles_number)
-        elif(self.velocity_repartition == "normal"):
+        elif self.velocity_repartition == "random":
+            self.velocities = np.random.uniform(-self.initial_velocity, self.initial_velocity,
+                                                size=self.particles_number)
+        elif self.velocity_repartition == "normal":
             self.velocities = np.random.normal(0, self.initial_velocity, size=self.particles_number)
         else:
             raise ValueError("Invalid velocity repartition")
@@ -135,7 +138,7 @@ class Simulation:
         pd.DataFrame([self.velocities]).to_csv(self.velocities_filepath, index=False)
         pd.DataFrame([self.potential]).to_csv(self.potential_filepath, index=False)
         pd.DataFrame([self.electric_field]).to_csv(self.electric_field_filepath, index=False)
-        
+
     def write_output_files_headers(self):
         with open(self.followed_particle_filepath, 'w') as f:
             f.write('Position,Velocity\n')
@@ -158,7 +161,7 @@ class Simulation:
         histograms, _ = np.histogram(self.positions, bins=self.cells_number, range=(0, self.domain_size))
         return self.particles_number / self.cells_number - histograms
 
-    def compute_potential_relaxation(self, density):
+    def compute_potential(self, density):
         """
         Update potential based on charge density using relaxation method.
 
@@ -170,49 +173,6 @@ class Simulation:
         self.potential = new_potential
         return new_potential
 
-    def compute_potential_jacobi(self, density):
-
-        for p in range(self.max_iteration_number_potential):
-
-            new_potential = ((np.roll(self.potential, 1) + np.roll(self.potential, -1)) / 2 +
-                             density * self.FACTOR * (1 / 2))
-            new_potential = np.mod(new_potential, self.domain_size)
-
-            delta = np.max(np.abs(new_potential - self.potential[-1, :]))
-
-            if delta < self.tolerance:
-                break
-            return new_potential
-
-    def compute_potential_matrix_inversion(self, density):
-        """
-        Compute potential based on charge density.
-
-        # Args:
-            - `density (numpy.ndarray)`: Charge density array.
-
-        # Returns:
-            `numpy.ndarray`: Potential array.
-        """
-        potential = np.linalg.solve(self.potential_matrix, - density * self.FACTOR)  # TODO : corriger
-        self.potential = potential
-
-    def compute_potential_Fourier(self, density):
-        """
-        Compute potential based on charge density using Fourier method.
-
-        # Args:
-            - `density (numpy.ndarray)`: Charge density array.
-
-        # Returns:
-            `numpy.ndarray`: Potential array.
-        """
-        density_fourier = np.fft.fft(density)
-        potential_fourier = density_fourier / (
-                -np.fft.fftfreq(self.cells_number) * np.fft.fftfreq(self.cells_number)) * self.FACTOR
-        potential = np.fft.ifft(potential_fourier)
-        self.potential = np.vstack((self.potential, potential))
-
     def compute_electric_field(self, potential):
         """
         Compute electric field based on potential.
@@ -223,7 +183,7 @@ class Simulation:
         # Returns:
             `numpy.ndarray`: Electric field array.
         """
-    
+
         self.electric_field = - np.gradient(potential, self.dx)
 
     def compute_particle_electric_field(self):
@@ -288,18 +248,20 @@ class Simulation:
         pd.DataFrame([self.velocities]).to_csv(self.velocities_filepath, mode='a', header=False, index=False)
         pd.DataFrame([self.electric_field]).to_csv(self.electric_field_filepath, mode='a', header=False, index=False)
         pd.DataFrame([self.potential]).to_csv(self.potential_filepath, mode='a', header=False, index=False)
-        
+
     def save_unit_results(self):
         followed_particle_position = self.positions[self.followed_particle_index]
         followed_particle_velocity = self.velocities[self.followed_particle_index]
-        followed_particle_df = pd.DataFrame({'Position': [followed_particle_position], 'Velocity': [followed_particle_velocity]})
+        followed_particle_df = pd.DataFrame(
+            {'Position': [followed_particle_position], 'Velocity': [followed_particle_velocity]})
         followed_particle_df.to_csv(self.followed_particle_filepath, mode='a', header=False, index=False)
-        
+
         followed_cell_potential = self.potential[self.followed_cell_index]
         followed_cell_electric_field = self.electric_field[self.followed_cell_index]
-        followed_cell_df = pd.DataFrame({'Potential': [followed_cell_potential], 'Electric Field': [followed_cell_electric_field]})
+        followed_cell_df = pd.DataFrame(
+            {'Potential': [followed_cell_potential], 'Electric Field': [followed_cell_electric_field]})
         followed_cell_df.to_csv(self.followed_cell_filepath, mode='a', header=False, index=False)
-        
+
     def run(self):
         """
         Run the simulation.
@@ -309,16 +271,12 @@ class Simulation:
         """
         for i in tqdm(range(self.iterations_number), desc='Running Simulation', unit='iterations'):
             charge_density = self.compute_charge_density()
-            # self.compute_potential_matrix_inversion(charge_density)
-            self.compute_potential_relaxation(charge_density)
-            # self.compute_potential_Fourier(charge_density)
-            # potential = self.compute_potential_jacobi(charge_density)
-            # self.potential_array = np.vstack((self.potential_array, potential))
+            self.compute_potential(charge_density)
             self.compute_electric_field(self.potential)
             particle_electric_field = self.compute_particle_electric_field()
             force = self.compute_force(particle_electric_field)
             self.compute_time_step()
             self.update_positions_velocities(force)
-            if(i % self.iteration_save_rate == 0 or i == self.iterations_number):
+            if i % self.iteration_save_rate == 0 or i == self.iterations_number:
                 self.save_global_results()
             self.save_unit_results()

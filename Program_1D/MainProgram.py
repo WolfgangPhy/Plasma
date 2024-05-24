@@ -41,7 +41,7 @@ class MainProgram:
         visualizer.plot_phase_space_foreach_saved_step()
         visualizer.plot_electric_field_foreach_saved_step()
         visualizer.plot_potential_foreach_saved_step()
-        visualizer.plot_particule_path()
+        visualizer.plot_particle_path()
         visualizer.plot_single_particle_phase_space()
         visualizer.plot_potential_for_single_cell()
         visualizer.plot_electric_field_fot_single_cell()

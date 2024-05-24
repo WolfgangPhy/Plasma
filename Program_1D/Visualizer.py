@@ -6,6 +6,7 @@ from FileHelper import FileHelper
 from tqdm import tqdm
 import os
 
+
 class Visualizer:
     """
     Class for visualizing the results of a particle-in-cell simulation.
@@ -28,7 +29,9 @@ class Visualizer:
         self.potential_filepath = os.path.join(self.directory_name, 'OutputFiles', 'potential.csv')
         self.followed_particle_filepath = os.path.join(self.directory_name, 'OutputFiles', 'followed_particle.csv')
         self.followed_cell_filepath = os.path.join(self.directory_name, 'OutputFiles', 'followed_cell.csv')
-        self.dt_filepath = os.path.join(self.directory_name, 'OutputFiles', 'dt.csv')
+        dt_filepath = os.path.join(self.directory_name, 'OutputFiles', 'dt.csv')
+        dt = pd.read_csv(dt_filepath).iloc[:, 0].to_numpy()
+        self.time = np.cumsum(dt)
         self.iteration_save_rate = iteration_save_rate
     
     def plot_phase_space(self, iteration_number=-1):
@@ -76,8 +79,8 @@ class Visualizer:
         
     def plot_phase_space_foreach_saved_step(self):
         with open(self.position_filepath) as f:
-            line_nmber = sum(1 for _ in f)
-        for i in tqdm(range(1, line_nmber - 1), desc='Plotting Phase Space', unit='steps'):
+            line_number = sum(1 for _ in f)
+        for i in tqdm(range(1, line_number - 1), desc='Plotting Phase Space', unit='steps'):
             Visualizer.plot_phase_space(self, i*self.iteration_save_rate)
             
     def plot_electric_field(self, iteration_number=-1):
@@ -93,17 +96,18 @@ class Visualizer:
         
         sns.set_theme()
         _, ax = plt.subplots(1, 1, figsize=(12, 6))
-        sns.lineplot(x=x, y=electric_field, ax=ax,color='purple')
+        sns.lineplot(x=x, y=electric_field, ax=ax, color='purple')
         ax.set_title('Electric Field')
         ax.set_xlabel('Position')
         ax.set_ylabel('Electric Field')
-        plt.savefig(os.path.join(self.directory_name, 'Plots', 'Global', 'Electric_Field', f'ElectricField_{iteration_number}.png'))
+        plt.savefig(os.path.join(self.directory_name, 'Plots', 'Global', 'Electric_Field',
+                                 f'ElectricField_{iteration_number}.png'))
         plt.close()
         
     def plot_electric_field_foreach_saved_step(self):
         with open(self.electric_field_filepath) as f:
-            line_nmber = sum(1 for _ in f)
-        for i in tqdm(range(1, line_nmber - 1), desc='Plotting Electric Field', unit='steps'):
+            line_number = sum(1 for _ in f)
+        for i in tqdm(range(1, line_number - 1), desc='Plotting Electric Field', unit='steps'):
             Visualizer.plot_electric_field(self, i*self.iteration_save_rate)
             
     def plot_potential(self, iteration_number=-1):
@@ -119,41 +123,40 @@ class Visualizer:
         
         sns.set_theme()
         _, ax = plt.subplots(1, 1, figsize=(12, 6))
-        sns.lineplot(x=x, y=potential, ax=ax,color='purple')
+        sns.lineplot(x=x, y=potential, ax=ax, color='purple')
         ax.set_title('Potential')
         ax.set_xlabel('Position')
         ax.set_ylabel('Potential')
-        plt.savefig(os.path.join(self.directory_name, 'Plots', 'Global', 'Potential', f'Potential_{iteration_number}.png'))
+        plt.savefig(os.path.join(self.directory_name, 'Plots', 'Global', 'Potential',
+                                 f'Potential_{iteration_number}.png'))
         plt.close()
         
     def plot_potential_foreach_saved_step(self):
         with open(self.potential_filepath) as f:
-            line_nmber = sum(1 for _ in f)
-        for i in tqdm(range(1, line_nmber - 1), desc='Plotting Potential', unit='steps'):
+            line_number = sum(1 for _ in f)
+        for i in tqdm(range(1, line_number - 1), desc='Plotting Potential', unit='steps'):
             Visualizer.plot_potential(self, i*self.iteration_save_rate)
             
-    def plot_particule_path(self):
-        particule_df = pd.read_csv(self.followed_particle_filepath)
-        particule_position = particule_df['Position']
-        dt = pd.read_csv(self.dt_filepath).iloc[:,0].to_numpy()
-        time = np.cumsum(dt)
+    def plot_particle_path(self):
+        particle_df = pd.read_csv(self.followed_particle_filepath)
+        particle_position = particle_df['Position']
         
         sns.set_theme()
         _, ax = plt.subplots(1, 1, figsize=(12, 6))
-        sns.lineplot(x=time, y=particule_position, ax=ax,color='purple')
-        ax.set_title('Particule Path')
+        sns.lineplot(x=self.time, y=particle_position, ax=ax, color='purple')
+        ax.set_title('Particle Path')
         ax.set_xlabel('Time')
         ax.set_ylabel('Position')
-        plt.savefig(os.path.join(self.directory_name, 'Plots', 'Followed_Particle', 'ParticulePath.png'))
+        plt.savefig(os.path.join(self.directory_name, 'Plots', 'Followed_Particle', 'ParticlePath.png'))
         
     def plot_single_particle_phase_space(self):
-        particule_df = pd.read_csv(self.followed_particle_filepath)
-        particule_position = particule_df['Position']
-        particule_velocity = particule_df['Velocity']
+        particle_df = pd.read_csv(self.followed_particle_filepath)
+        particle_position = particle_df['Position']
+        particle_velocity = particle_df['Velocity']
         
         sns.set_theme()
         _, ax = plt.subplots(1, 1, figsize=(12, 6))
-        sns.scatterplot(x=particule_position, y=particule_velocity, ax=ax, color='purple', s=1)
+        sns.scatterplot(x=particle_position, y=particle_velocity, ax=ax, color='purple', s=1)
         ax.set_title('Single Particle Phase Space')
         ax.set_xlabel('Position')
         ax.set_ylabel('Velocity')
@@ -162,12 +165,10 @@ class Visualizer:
     def plot_potential_for_single_cell(self):
         cell_df = pd.read_csv(self.followed_cell_filepath)
         potential = cell_df['Potential']
-        dt = pd.read_csv(self.dt_filepath).iloc[:,0].to_numpy()
-        time = np.cumsum(dt)
-        
+
         sns.set_theme()
         _, ax = plt.subplots(1, 1, figsize=(12, 6))
-        sns.lineplot(x=time, y=potential, ax=ax,color='purple')
+        sns.lineplot(x=self.time, y=potential, ax=ax, color='purple')
         ax.set_title('Potential for Single Cell')
         ax.set_xlabel('Time')
         ax.set_ylabel('Potential')
@@ -176,12 +177,12 @@ class Visualizer:
     def plot_electric_field_fot_single_cell(self):
         cell_df = pd.read_csv(self.followed_cell_filepath)
         electric_field = cell_df['Electric Field']
-        dt = pd.read_csv(self.dt_filepath).iloc[:,0].to_numpy()
+        dt = pd.read_csv(self.dt_filepath).iloc[:, 0].to_numpy()
         time = np.cumsum(dt)
         
         sns.set_theme()
         _, ax = plt.subplots(1, 1, figsize=(12, 6))
-        sns.lineplot(x=time, y=electric_field, ax=ax,color='purple')
+        sns.lineplot(x=time, y=electric_field, ax=ax, color='purple')
         ax.set_title('Electric Field for Single Cell')
         ax.set_xlabel('Time')
         ax.set_ylabel('Electric Field')
