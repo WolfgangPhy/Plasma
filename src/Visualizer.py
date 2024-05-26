@@ -38,6 +38,7 @@ class Visualizer:
 
     def __init__(self, iteration_save_rate, position_filename='positions.csv', velocity_filename='velocities.csv'):
         self.directory_name = FileHelper.get_test_directory_name()
+        self.directory_name = os.path.join('Tests', "PN_100k_DS_100_CN_300_V_1-0_PC_-1-0_PM_1-0_VR_N_3")
         self.position_filepath = os.path.join(self.directory_name, 'OutputFiles', position_filename)
         self.velocity_filepath = os.path.join(self.directory_name, 'OutputFiles', velocity_filename)
         self.electric_field_filepath = os.path.join(self.directory_name, 'OutputFiles', 'electric_field.csv')
@@ -137,7 +138,6 @@ class Visualizer:
         ax.set_title('Electric Field')
         ax.set_xlabel('Cell Index')
         ax.set_ylabel('Electric Field')
-        # add x ticks star from 9 to int(np.max(x)) with step 10 that spead owver the whole x axis
         ax.set_xticks(np.arange(0, len(x), 20))
         plt.savefig(os.path.join(self.directory_name, 'Plots', 'Global', 'Electric_Field',
                                  f'electric_field_{iteration_number}.png'))
@@ -173,8 +173,6 @@ class Visualizer:
         sns.set_theme()
         _, ax = plt.subplots(1, 1, figsize=(12, 6))
         sns.lineplot(x=x, y=potential, ax=ax, color='purple')
-        ax.axvline(x=potential.idxmin(), color='red', linestyle='--')
-        ax.axvline(x=potential.idxmax(), color='green', linestyle='--')
         ax.set_title('Potential')
         ax.set_xlabel('Cell Index')
         ax.set_ylabel('Potential')
