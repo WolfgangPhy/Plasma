@@ -1,6 +1,6 @@
 {
     "cells_number": 300,
-    "domain_size": 1,
+    "domain_size": 100,
     "max_initial_velocity_deviation": 0.01,
     "particle_charge": -1,
     "particle_mass": 1,
