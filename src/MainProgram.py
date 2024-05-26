@@ -45,12 +45,13 @@ class MainProgram:
         """
         visualizer = Visualizer(self.parameters['iteration_save_rate'])
         #visualizer.plot_phase_space_foreach_saved_step()
-        visualizer.plot_electric_field_foreach_saved_step()
-        visualizer.plot_potential_foreach_saved_step()
+        #visualizer.plot_electric_field_foreach_saved_step()
+        #visualizer.plot_potential_foreach_saved_step()
         visualizer.plot_single_particle_position()
         visualizer.plot_single_particle_phase_space()
         visualizer.plot_potential_for_single_cell()
         visualizer.plot_electric_field_for_single_cell()
+        visualizer.plot_particles_density()
 
     def execute(self):
         """

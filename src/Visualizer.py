@@ -174,6 +174,8 @@ class Visualizer:
         sns.set_theme()
         _, ax = plt.subplots(1, 1, figsize=(12, 6))
         sns.lineplot(x=x, y=potential, ax=ax, color='purple')
+        ax.axvline(x=potential.idxmin(), color='red', linestyle='--')
+        ax.axvline(x=potential.idxmax(), color='green', linestyle='--')
         ax.set_title('Potential')
         ax.set_xlabel('Cell Index')
         ax.set_ylabel('Potential')
@@ -251,3 +253,36 @@ class Visualizer:
         ax.set_xlabel('Time')
         ax.set_ylabel('Electric Field')
         plt.savefig(os.path.join(self.directory_name, 'Plots', 'Followed_Cell', 'single_cell_electric.png'))
+
+    def plot_particles_density(self):
+        """
+        Plot the density of the particles over time.
+        """
+        position = pd.read_csv(self.position_filepath).iloc[-1]
+        potential = pd.read_csv(self.potential_filepath).iloc[-1]
+
+        sns.set_theme()
+        _, ax1 = plt.subplots(figsize=(12, 6))
+
+        sns.histplot(position, binwidth=5, ax=ax1, color='green')
+        ax1.set_title('Particles Density')
+        ax1.set_xlabel('Position', color='green')
+        ax1.set_ylabel('Density', color='green')
+        ax1.tick_params(axis='y', labelcolor='green')
+        ax1.tick_params(axis='x', labelcolor='green')
+        ax1.grid(False)
+
+        ax2 = ax1.twinx().twiny()
+
+        sns.lineplot(x=potential.index, y=potential, ax=ax2, color='purple')
+        ax2.set_xticks(np.arange(0, len(potential), 20))
+        ax2.set_xlabel('Cell Index ', color='purple')
+        ax2.set_ylabel('Potential', color='purple')
+        ax2.tick_params(axis='x', labelcolor='purple')
+        ax2.tick_params(axis='y', labelcolor='purple')
+        ax2.xaxis.set_ticks_position('top')
+        ax2.xaxis.set_label_position('top')
+        ax2.yaxis.set_ticks_position('right')
+        ax2.yaxis.set_label_position('right')
+        ax2.grid(False)
+        plt.savefig(os.path.join(self.directory_name, 'Plots', 'Global', 'particles_density.png'))
