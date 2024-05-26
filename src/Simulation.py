@@ -192,7 +192,7 @@ class Simulation:
         # Returns:
             None
         """
-        self.electric_field = - np.gradient(potential[-1, :], self.dx)
+        self.electric_field = - np.gradient(potential, self.dx)
 
     def compute_particle_electric_field(self):
         """

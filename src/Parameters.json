@@ -5,10 +5,10 @@
     "particle_charge": -1,
     "particle_mass": 1,
     "particles_number": 100000,
-    "initial_velocity": 1,
+    "initial_velocity": 20,
     "iteration_save_rate": 500,
-    "iterations_number": 10000,
-    "velocity_repartition": "2streams",
+    "iterations_number": 500,
+    "velocity_repartition": "normal",
     "tolerance": 0.01,
     "max_iteration_number_potential": 1000
 }
