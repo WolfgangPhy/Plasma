@@ -38,7 +38,6 @@ class Visualizer:
 
     def __init__(self, iteration_save_rate, position_filename='positions.csv', velocity_filename='velocities.csv'):
         self.directory_name = FileHelper.get_test_directory_name()
-        self.directory_name = os.path.join('Tests', 'PN_100k_DS_100_CN_300_V_1-0_PC_-1-0_PM_1-0_VR_N_3')
         self.position_filepath = os.path.join(self.directory_name, 'OutputFiles', position_filename)
         self.velocity_filepath = os.path.join(self.directory_name, 'OutputFiles', velocity_filename)
         self.electric_field_filepath = os.path.join(self.directory_name, 'OutputFiles', 'electric_field.csv')

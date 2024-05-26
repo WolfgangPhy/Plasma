@@ -73,6 +73,12 @@ class Simulation:
         self.potential_filepath = os.path.join(self.directory_name, 'OutputFiles', 'potential.csv')
         self.velocities_filepath = os.path.join(self.directory_name, 'OutputFiles', 'velocities.csv')
         
+        EPSILON_0 = 0.57  # m^(-3) s^2 ProtonMass^(-1) ElementaryCharge^2
+        self.FACTOR = self.dx * self.dx / EPSILON_0
+        
+        self.max_iteration_number_potential = parameters['max_iteration_number_potential']
+        self.tolerance = parameters['tolerance']
+        
         self.set_initial_conditions()
         self.init_arrays()
         self.write_output_files_headers()
@@ -154,8 +160,8 @@ class Simulation:
         """
         histograms, _ = np.histogram(self.positions, bins=self.cells_number, range=(0, self.domain_size))
         return self.particles_number / self.cells_number - histograms
-
-    def compute_potential(self, density):
+        
+    def compute_potential_jacobi(self, density):
         """
         Update potential based on charge density using relaxation method.
 
@@ -165,9 +171,16 @@ class Simulation:
         # Returns:
             None
         """
-        new_potential = ((np.roll(self.potential, 1) + np.roll(self.potential, -1)) / 2 +
-                         density * self.FACTOR * (1 / 2))
-        self.potential = new_potential
+        for _ in range(self.max_iteration_number_potential):
+
+            new_potential = ((np.roll(self.potential, 1) + np.roll(self.potential, -1)) / 2 +
+                             density * self.FACTOR * (1 / 2))
+
+            delta = np.max(np.abs(new_potential - self.potential))
+
+            if delta < self.tolerance:
+                break
+            return new_potential
 
     def compute_electric_field(self, potential):
         """
@@ -179,8 +192,7 @@ class Simulation:
         # Returns:
             None
         """
-
-        self.electric_field = - np.gradient(potential, self.dx)
+        self.electric_field = - np.gradient(potential[-1, :], self.dx)
 
     def compute_particle_electric_field(self):
         """
@@ -287,7 +299,7 @@ class Simulation:
         """
         for i in tqdm(range(self.iterations_number), desc='Running Simulation', unit='iterations'):
             charge_density = self.compute_charge_density()
-            self.compute_potential(charge_density)
+            self.potential = self.compute_potential_jacobi(charge_density)
             self.compute_electric_field(self.potential)
             particle_electric_field = self.compute_particle_electric_field()
             force = self.compute_force(particle_electric_field)
