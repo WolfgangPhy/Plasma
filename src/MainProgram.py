@@ -44,9 +44,9 @@ class MainProgram:
         Visualizes the results of the simulation using the Visualizer class.
         """
         visualizer = Visualizer(self.parameters['iteration_save_rate'])
-        #visualizer.plot_phase_space_foreach_saved_step()
-        #visualizer.plot_electric_field_foreach_saved_step()
-        #visualizer.plot_potential_foreach_saved_step()
+        visualizer.plot_phase_space_foreach_saved_step()
+        visualizer.plot_electric_field_foreach_saved_step()
+        visualizer.plot_potential_foreach_saved_step()
         visualizer.plot_single_particle_position()
         visualizer.plot_single_particle_phase_space()
         visualizer.plot_potential_for_single_cell()
@@ -57,7 +57,7 @@ class MainProgram:
         """
         Execute the simulation and visualizes the results using the Simulation and Visualizer classes.
         """
-        # self.simulate()
+        self.simulate()
         self.visualize()
 
 

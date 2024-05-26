@@ -1,12 +1,12 @@
 {
     "cells_number": 300,
     "domain_size": 100,
-    "max_initial_velocity_deviation": 0.1,
-    "particle_charge": -1.0,
-    "particle_mass": 1.0,
+    "max_initial_velocity_deviation": 0.01,
+    "particle_charge": -1,
+    "particle_mass": 1,
     "particles_number": 100000,
     "initial_velocity": 1,
     "iteration_save_rate": 500,
     "iterations_number": 10000,
-    "velocity_repartition": "normal"
+    "velocity_repartition": "2streams"
 }

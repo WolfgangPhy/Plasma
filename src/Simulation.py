@@ -2,6 +2,7 @@ import numpy as np
 from tqdm import tqdm
 import pandas as pd
 import os
+from scipy.constants import epsilon_0
 
 
 class Simulation:
@@ -44,7 +45,6 @@ class Simulation:
     """
 
     def __init__(self, parameters, directory_name):
-        
         self.directory_name = directory_name
         self.parameters = parameters
         
@@ -66,9 +66,6 @@ class Simulation:
         self.velocity_repartition = None
         self.velocities = None
         self.dx = self.parameters['domain_size'] / self.parameters['cells_number']
-        
-        EPSILON_0 = 0.57  # m^(-3) s^2 ProtonMass^(-1) ElementaryCharge^2
-        self.FACTOR = self.dx * self.dx / EPSILON_0
         self.electric_field_filepath = os.path.join(self.directory_name, 'OutputFiles', 'electric_field.csv')
         self.followed_cell_filepath = os.path.join(self.directory_name, 'OutputFiles', 'followed_cell.csv')
         self.followed_particle_filepath = os.path.join(self.directory_name, 'OutputFiles', 'followed_particle.csv')
